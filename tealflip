@@ -1,4 +1,16 @@
 #!/usr/bin/python3
-from main import main
+import sys
 
-main()
+from help import help
+from init import init
+from status import status
+
+try:
+    if sys.argv[1] == "init":
+        init()
+    elif sys.argv[1] == "status":
+        status()
+    else:
+        help()
+except IndexError:
+    sys.exit("Arguments are less than expected")
