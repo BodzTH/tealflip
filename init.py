@@ -1,10 +1,28 @@
 import os
 import subprocess
-from fnmatch import fnmatch
 from pathlib import Path
 
 
+def mkdir(path: Path) -> None:
+    try:
+        os.mkdir(path)
+    except FileExistsError:
+        pass
+
+
 def check_shell() -> str:
+    """
+    ps: to check for running process
+    -p: to select PID
+    os.getppid: to get the parent process id which will be the shell called the script
+    -o: to specify the output format
+    comm=: sets the header of COMMAND column to nothing so we get the shell name only
+    capture_output=True: so we can capture stdout and stderr
+    shell=False: so python does not treat onlythe first item as command and rest as arguments
+    text=True: Decodes/Encodes Input/Output as str instead of bytes
+    check=False: so if a command fails with a non-zero exit code it does not raise CalledProcessError exception
+    """
+
     shell = subprocess.run(
         ["ps", "-p", str(os.getppid()), "-o", "comm="],
         capture_output=True,
@@ -12,27 +30,22 @@ def check_shell() -> str:
         text=True,
         check=False,
     ).stdout
-    return shell.strip("\n")
+
+    return shell.strip("\n")  # remove trailing end line from shell name
 
 
-def mkdir(path: Path) -> None:
-
-    try:
-        os.mkdir(path)
-    except FileExistsError:
-        pass
-
-
-def replace_export_line(path: Path, shell_conf: Path, env: str, env_line: str):
-    for text in shell_conf.read_text().split("\n"):
-        if env in text:
+def replace_export_line(path: Path, config_file: Path, env_line: str):
+    for text in config_file.read_text().split("\n"):
+        if env_line in text:
             splitted_path = text.split()[1]
             add_path = "\n" + splitted_path[:-1] + f':{path}"' + "\n"
 
     lines: list[str] = []
-    with shell_conf.open("r") as file:
+
+    with config_file.open("r") as file:
         lines = file.readlines()
-    with shell_conf.open("w") as file:
+
+    with config_file.open("w") as file:
         for line in lines:
             if env_line in line:
                 file.write(add_path)
@@ -40,36 +53,63 @@ def replace_export_line(path: Path, shell_conf: Path, env: str, env_line: str):
                 file.write(line)
 
 
-def add_path_env(path: Path, shell_conf: Path, env: str, env_line: str) -> None:
+def add_path_env(path: Path, config_file: Path, env: str, env_line: str) -> None:
     env_value = os.getenv(env)
-    shell_conf_file = shell_conf.read_text()
+    shell_conf_file = config_file.read_text()
 
     if env_value == None:
         if env_line in shell_conf_file and (str(path) not in shell_conf_file):
-            with shell_conf.open("a") as file:
+            with config_file.open("a") as file:
                 file.write(f'\nexport {env_line}"${env}:{path}"\n')
                 print("Restart Shell!")
                 return
+
     elif str(path) in env_value:
         return
+
     else:
-        if env_line in shell_conf_file and (str(path) not in shell_conf_file):
-            replace_export_line(path, shell_conf, env, env_line)
-        else:
-            pass
+        replace_export_line(path, config_file, env_line)
 
 
 def init():
-    path = Path.home() / ".local" / "bin"
-    mkdir(path)
+    # Initializing Variables
+    local_bin_path = (
+        Path.home() / ".local" / "bin"
+    )  # Absolute path to .local/bin directory
+    shell_config_file = Path.home() / ".bashrc"  # Shell Configuration File
+    shell = check_shell()  # shell name
 
-    shell_conf = Path.home() / ".bashrc"
-    shell = check_shell()
-    if fnmatch(shell, "fish"):
-        shell_conf = Path.home() / ".config/fish/config.fish"
-    if fnmatch(shell, "zsh"):
-        shell_conf = Path.home() / ".zshrc"
-    if fnmatch(shell, "bash"):
-        shell_conf = Path.home() / ".bashrc"
+    # making .local/bin directory if does not exist
+    mkdir(local_bin_path)
 
-    add_path_env(path, shell_conf, "PATH", "PATH=")
+    # Assiging the shell configuration path for working shell
+    if shell == "bash":
+        shell_config_file = Path.home() / ".bashrc"
+    elif shell == "zsh":
+        shell_config_file = Path.home() / ".zshrc"
+    elif shell == "fish":
+        shell_config_file = Path.home() / ".config/fish/config.fish"
+    else:
+        print("Unknown Shell, try:\n", "Bash", "Zshell", "Fish")
+
+    # Adding .local/bin directory to PATH if not set
+    add_path_env(local_bin_path, shell_config_file, "PATH", "PATH=")
+
+    """
+    ln: link a second file to first file 
+    -s: to make symlink instead of hard link
+    f"{os.getcwd()}/tealflip": (first file) tealflip absolute path 
+    f"{local_bin_path}/tealflip": (second file) the directory path to put the symlink file which is .local/bin
+    text=True: Decodes/Encodes Input/Output as str instead of bytes
+    check=False: so if a command fails with a non-zero exit code it does not raise CalledProcessError exception
+    shell=False: so python does not treat onlythe first item as command and rest as arguments
+    """
+    if not os.path.isfile(
+        f"{local_bin_path}/tealflip"
+    ):  # if tealflip symlink does not exist in .local/bin
+        subprocess.run(
+            ["ln", "-s", f"{os.getcwd()}/tealflip", f"{local_bin_path}/tealflip"],
+            text=True,
+            check=False,
+            shell=False,
+        )
