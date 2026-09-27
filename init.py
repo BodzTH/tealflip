@@ -23,33 +23,38 @@ def mkdir(path: Path) -> None:
         pass
 
 
-def replace_export_line(path: Path, shell_conf: Path, env: str, export_line: str):
+def replace_export_line(path: Path, shell_conf: Path, env: str, env_line: str):
     for text in shell_conf.read_text().split("\n"):
         if env in text:
             splitted_path = text.split()[1]
-            add_path = "export " + splitted_path[:-1] + f':{path}"' + "\n"
+            add_path = "\n" + splitted_path[:-1] + f':{path}"' + "\n"
 
     lines: list[str] = []
     with shell_conf.open("r") as file:
         lines = file.readlines()
     with shell_conf.open("w") as file:
         for line in lines:
-            if export_line in line:
+            if env_line in line:
                 file.write(add_path)
             else:
                 file.write(line)
 
 
-def add_path_env(path: Path, shell_conf: Path, env: str, export_line: str) -> None:
-    try:
-        os.environ[env]
-    except KeyError:
-        shell_conf_text = shell_conf.read_text()
-        if export_line in shell_conf_text and (str(path) not in shell_conf_text):
-            replace_export_line(path, shell_conf, env, export_line)
-        elif export_line not in shell_conf_text:
+def add_path_env(path: Path, shell_conf: Path, env: str, env_line: str) -> None:
+    env_value = os.getenv(env)
+    shell_conf_file = shell_conf.read_text()
+
+    if env_value == None:
+        if env_line in shell_conf_file and (str(path) not in shell_conf_file):
             with shell_conf.open("a") as file:
-                file.write(f'{export_line}"${env}:{path}"')
+                file.write(f'\nexport {env_line}"${env}:{path}"\n')
+                print("Restart Shell!")
+                return
+    elif str(path) in env_value:
+        return
+    else:
+        if env_line in shell_conf_file and (str(path) not in shell_conf_file):
+            replace_export_line(path, shell_conf, env, env_line)
         else:
             pass
 
@@ -67,4 +72,4 @@ def init():
     if fnmatch(shell, "bash"):
         shell_conf = Path.home() / ".bashrc"
 
-    add_path_env(path, shell_conf, "PATH", "export PATH=")
+    add_path_env(path, shell_conf, "PATH", "PATH=")
