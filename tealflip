@@ -1,16 +1,27 @@
 #!/usr/bin/python3
-import sys
 
-from help import help
+import argparse
+
 from init import init
 from status import status
 
-try:
-    if sys.argv[1] == "init":
-        init()
-    elif sys.argv[1] == "status":
-        status()
-    else:
-        help()
-except IndexError:
-    sys.exit("Arguments are less than expected")
+parser = argparse.ArgumentParser("tealflip")
+
+
+subparsers = parser.add_subparsers(title="subcommands", prog="tealflip", required=True)
+
+
+parser_init = subparsers.add_parser(
+    "init",
+    description="tealflip initializer",
+    help="initialize files and configurations",
+).set_defaults(func=init)
+
+
+parser_status = subparsers.add_parser(
+    "status", description="tealflip status", help="shows current machine state"
+).set_defaults(func=status)
+
+
+args = parser.parse_args()
+args.func()
