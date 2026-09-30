@@ -2,6 +2,10 @@ import os
 import subprocess
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+from nginx_init import nginx_init
+
 
 def mkdir(path: Path) -> None:
     try:
@@ -73,6 +77,7 @@ def add_path_env(path: Path, config_file: Path, env: str, env_line: str) -> None
 
 def init():
     # Initializing Variables
+    load_dotenv()
     local_bin_path = (
         Path.home() / ".local" / "bin"
     )  # Absolute path to .local/bin directory
@@ -113,3 +118,4 @@ def init():
             check=False,
             shell=False,
         )
+    nginx_init(os.getenv("IP"), os.getenv("DNS"), os.getenv("PROJECT"))
