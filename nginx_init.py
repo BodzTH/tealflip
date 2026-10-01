@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 
@@ -42,9 +43,23 @@ def nginx_init(ip: str | None, dns: str | None, project: str | None) -> None:
         text=True,
         shell=False,
     )
-    subprocess.run(
-        ["sudo", "cp", "./nginx.conf", "/etc/nginx/nginx.conf"],
-        check=False,
+
+    os.environ["DNS"] = dns
+
+    process1 = subprocess.Popen(
+        ["cat", "nginx_template.conf"], stdout=subprocess.PIPE, text=True
+    )
+    process1.wait()
+    process2 = subprocess.Popen(
+        ["envsubst", "'${DNS}'"],
+        stdin=process1.stdout,
+        stdout=subprocess.PIPE,
         text=True,
-        shell=False,
+    )
+    process2.wait()
+    subprocess.Popen(
+        ["sudo", "tee", "/etc/nginx/nginx.conf"],
+        stdin=process2.stdout,
+        stdout=subprocess.DEVNULL,
+        text=True,
     )
