@@ -1,2 +1,2 @@
 def status() -> None:
-    return None
+    print("status test")
