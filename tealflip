@@ -3,6 +3,7 @@
 import argparse
 
 from init import init
+from rollback import rollback
 from status import status
 
 parser = argparse.ArgumentParser("tealflip")
@@ -22,6 +23,9 @@ parser_status = subparsers.add_parser(
     "status", description="tealflip status", help="shows current machine state"
 ).set_defaults(func=status)
 
+parser_rollback = subparsers.add_parser(
+    "rollback", description="tealflip rollback", help="rollback to safe deployment"
+).set_defaults(func=rollback)
 
 args = parser.parse_args()
 args.func()

@@ -1,0 +1,2 @@
+def rollback() -> None:
+    pass
