@@ -2,23 +2,8 @@ import os
 import subprocess
 from pathlib import Path
 
-from dotenv import load_dotenv
-
+from config import DNS, IP
 from nginx_init import nginx_init
-
-
-def mkdir(path: Path) -> None:
-    try:
-        os.mkdir(path)
-    except FileExistsError:
-        pass
-
-
-def mkdir(path: Path) -> None:
-    try:
-        os.mkdir(path)
-    except FileExistsError:
-        pass
 
 
 def check_shell() -> str:
@@ -49,7 +34,9 @@ def replace_export_line(path: Path, config_file: Path, env_line: str):
     for text in config_file.read_text().split("\n"):
         if env_line in text:
             splitted_path = text.split()[1]
-            add_path = "\n" + splitted_path[:-1] + f':{path}"' + "\n"
+            add_path = (
+                "\n" + splitted_path[:-1] + f':{path}"' + " # added by tealflip" + "\n"
+            )
 
     lines: list[str] = []
 
@@ -84,8 +71,6 @@ def add_path_env(path: Path, config_file: Path, env: str, env_line: str) -> None
 
 def init():
     # Initializing Variables
-    load_dotenv()
-
     local_bin_path = (
         Path.home() / ".local" / "bin"
     )  # Absolute path to .local/bin directory
@@ -93,7 +78,7 @@ def init():
     shell = check_shell()  # shell name
 
     # making .local/bin directory if does not exist
-    mkdir(local_bin_path)
+    local_bin_path.mkdir(parents=True, exist_ok=True)
 
     # Assiging the shell configuration path for working shell
     if shell == "bash":
@@ -127,4 +112,4 @@ def init():
             shell=False,
         )
 
-    nginx_init(os.getenv("IP"), os.getenv("DNS"), os.getenv("PROJECT"))
+    nginx_init(IP, DNS)

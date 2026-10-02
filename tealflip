@@ -1,10 +1,12 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import argparse
 
+from deploy import deploy
 from init import init
 from rollback import rollback
 from status import status
+from watch import watch
 
 parser = argparse.ArgumentParser("tealflip")
 
@@ -15,17 +17,25 @@ subparsers = parser.add_subparsers(title="subcommands", prog="tealflip", require
 parser_init = subparsers.add_parser(
     "init",
     description="tealflip initializer",
-    help="initialize files and configurations",
+    help="Initialize files and configurations",
 ).set_defaults(func=init)
 
 
 parser_status = subparsers.add_parser(
-    "status", description="tealflip status", help="shows current machine state"
+    "status", description="tealflip status", help="Shows current machine state"
 ).set_defaults(func=status)
 
 parser_rollback = subparsers.add_parser(
-    "rollback", description="tealflip rollback", help="rollback to safe deployment"
+    "rollback", description="tealflip rollback", help="Rollback to safe deployment"
 ).set_defaults(func=rollback)
+
+parser_deploy = subparsers.add_parser(
+    "deploy", description="tealflip deploy", help="Deploy latest commit"
+).set_defaults(func=deploy)
+
+parser_watch = subparsers.add_parser(
+    "watch", description="tealflip watch", help="Run watch loop"
+).set_defaults(func=watch)
 
 args = parser.parse_args()
 args.func()
