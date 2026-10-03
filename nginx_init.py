@@ -15,6 +15,30 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
     subprocess.run(
         ["sudo", "mkdir", "-p", "/etc/nginx/certs"], check=False, text=True, shell=False
     )
+    subprocess.run(
+        ["sudo", "mkdir", "-p", "/etc/nginx/logs"], check=False, text=True, shell=False
+    )
+    subprocess.run(
+        [
+            "sudo",
+            "useradd",
+            "--system",
+            "--user-group",
+            "--no-create-home",
+            "--shell",
+            "/usr/bin/nologin",
+            "nginx",
+        ],
+        check=False,
+        text=True,
+        shell=False,
+    )
+    subprocess.run(
+        ["sudo", "chown", "-R", "nginx:nginx", "/var/www"],
+        check=False,
+        text=True,
+        shell=False,
+    )
     subprocess.run(["mkcert", "-install"], check=False, text=True, shell=False)
     subprocess.run(
         [
@@ -40,12 +64,6 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
     subprocess.run(
         ["cp", f"{rootcert_path}/rootCA.pem", "./"], check=False, text=True, shell=False
     )
-    # subprocess.run(
-    #     ["sudo", "cp", "-r", f"{project}/*.{{html,css}}", "/var/www/"],
-    #     check=False,
-    #     text=True,
-    #     shell=False,
-    # )
 
     os.environ["DNS"] = dns
     nginx_conf_text = Path("nginx_template.conf").read_text().replace("${DNS}", dns)
