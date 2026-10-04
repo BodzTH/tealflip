@@ -3,11 +3,12 @@ from pathlib import Path
 
 
 def deploy() -> None:
-    if "blue" not in Path("/etc/nginx/tealflip/active_slot.conf").read_text():
-        active_slot = "blue"
-    elif "green" not in Path("/etc/nginx/tealflip/active_slot.conf").read_text():
-        active_slot = "green"
-    else:
+    try:
+        if "blue" in Path("/etc/nginx/tealflip/active_slot.conf").read_text():
+            active_slot = "green"
+        elif "green" in Path("/etc/nginx/tealflip/active_slot.conf").read_text():
+            active_slot = "blue"
+    except FileNotFoundError:
         print("Deploying!")
     subprocess.run(
         ["sudo", "tee", "/etc/nginx/tealflip/active_slot.conf"],
