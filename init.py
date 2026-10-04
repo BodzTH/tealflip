@@ -57,7 +57,7 @@ def add_path_env(path: Path, config_file: Path, env: str, env_line: str) -> None
     if (env_value == None) or (str(path) not in env_value):
         with config_file.open("a") as file:
             file.write(f'\nexport {env_line}"${env}:{path}"\n')
-            print(f"Run: source {config_file}")
+            print(f"Run: source {config_file}\n")
             return
 
     elif str(path) in env_value:

@@ -46,6 +46,7 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         text=True,
         shell=False,
         stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
     subprocess.run(
         ["sudo", "chown", "-R", "nginx:nginx", "/var/www"],
@@ -54,7 +55,13 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         shell=False,
         stdout=subprocess.DEVNULL,
     )
-    subprocess.run(["mkcert", "-install"], check=False, text=True, shell=False)
+    subprocess.run(
+        ["mkcert", "-install"],
+        check=False,
+        text=True,
+        shell=False,
+        stdout=subprocess.DEVNULL,
+    )
     subprocess.run(
         [
             "mkcert",
