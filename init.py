@@ -54,7 +54,9 @@ def replace_export_line(path: Path, config_file: Path, env_line: str):
 def add_path_env(path: Path, config_file: Path, env: str, env_line: str) -> None:
     env_value = os.getenv(env)
 
-    if (env_value == None) or (str(path) not in env_value):
+    if (env_value == None) or (
+        (str(path) not in env_value) and (str(path) not in config_file.read_text())
+    ):
         with config_file.open("a") as file:
             file.write(f'\nexport {env_line}"${env}:{path}"\n')
             print(f"Run: source {config_file}\n")
