@@ -10,6 +10,7 @@ def deploy() -> None:
             active_slot = "blue"
     except FileNotFoundError:
         print("Deploying!")
+        active_slot = "blue"
     subprocess.run(
         ["sudo", "tee", "/etc/nginx/tealflip/active_slot.conf"],
         input=f"root /var/www/{active_slot}",
