@@ -1,6 +1,7 @@
 import os
 import subprocess
 from pathlib import Path
+from sys import stdout
 
 from deploy import deploy
 
@@ -44,12 +45,14 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         check=False,
         text=True,
         shell=False,
+        stdout=subprocess.DEVNULL,
     )
     subprocess.run(
         ["sudo", "chown", "-R", "nginx:nginx", "/var/www"],
         check=False,
         text=True,
         shell=False,
+        stdout=subprocess.DEVNULL,
     )
     subprocess.run(["mkcert", "-install"], check=False, text=True, shell=False)
     subprocess.run(
@@ -66,6 +69,7 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         check=False,
         text=True,
         shell=False,
+        stdout=subprocess.DEVNULL,
     )
     subprocess.run(
         ["sudo", "mv", "cert.pem", "key.pem", "/etc/nginx/certs"],
