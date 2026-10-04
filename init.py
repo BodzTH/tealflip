@@ -53,14 +53,12 @@ def replace_export_line(path: Path, config_file: Path, env_line: str):
 
 def add_path_env(path: Path, config_file: Path, env: str, env_line: str) -> None:
     env_value = os.getenv(env)
-    shell_conf_file = config_file.read_text()
 
     if (env_value == None) or (str(path) not in env_value):
-        if env_line in shell_conf_file and (str(path) not in shell_conf_file):
-            with config_file.open("a") as file:
-                file.write(f'\nexport {env_line}"${env}:{path}"\n')
-                print(f"Run: source {config_file}")
-                return
+        with config_file.open("a") as file:
+            file.write(f'\nexport {env_line}"${env}:{path}"\n')
+            print(f"Run: source {config_file}")
+            return
 
     elif str(path) in env_value:
         return
@@ -71,7 +69,7 @@ def add_path_env(path: Path, config_file: Path, env: str, env_line: str) -> None
 
 def init():
     if Path("/etc/nginx/tealflip/active_slot.conf").exists():
-        print("Already Initialized")
+        print("Already Initialized!")
         return
     # Initializing Variables
     local_bin_path = (
