@@ -87,7 +87,7 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         shell=False,
     )
     print(
-        f"Copy rootCA pub key found in {rootcert_path}/rootCA.pem to add it to your Browser Certificates"
+        f"Copy rootCA pub key in {rootcert_path}/rootCA.pem and add it to your Browser Certificates"
     )
 
     os.environ["DNS"] = dns
