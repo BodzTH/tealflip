@@ -61,6 +61,7 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         text=True,
         shell=False,
         stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
     subprocess.run(
         [
@@ -77,6 +78,7 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         text=True,
         shell=False,
         stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
     subprocess.run(
         ["sudo", "mv", "cert.pem", "key.pem", "/etc/nginx/certs"],
