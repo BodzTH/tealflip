@@ -70,6 +70,9 @@ def add_path_env(path: Path, config_file: Path, env: str, env_line: str) -> None
 
 
 def init():
+    if Path("/etc/nginx/tealflip/active_slot.conf").exists():
+        print("Already Initialized")
+        return
     # Initializing Variables
     local_bin_path = (
         Path.home() / ".local" / "bin"

@@ -16,6 +16,3 @@ def watch() -> None:
         capture_output=True,
     ).stdout
     print(remote_status)
-
-
-watch()

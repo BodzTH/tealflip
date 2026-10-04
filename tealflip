@@ -22,19 +22,19 @@ parser_init = subparsers.add_parser(
 
 
 parser_status = subparsers.add_parser(
-    "status", description="tealflip status", help="Shows current machine state"
+    "status", description="tealflip status", help="Shows current active slot"
 ).set_defaults(func=status)
 
 parser_rollback = subparsers.add_parser(
-    "rollback", description="tealflip rollback", help="Rollback to safe deployment"
+    "rollback", description="tealflip rollback", help="Rollback to idle slot"
 ).set_defaults(func=rollback)
 
 parser_deploy = subparsers.add_parser(
-    "deploy", description="tealflip deploy", help="Deploy latest commit"
+    "deploy", description="tealflip deploy", help="Deploy new version commit"
 ).set_defaults(func=deploy)
 
 parser_watch = subparsers.add_parser(
-    "watch", description="tealflip watch", help="Run watch loop"
+    "watch", description="tealflip watch", help="Watch remote git"
 ).set_defaults(func=watch)
 
 args = parser.parse_args()

@@ -2,6 +2,8 @@ import os
 import subprocess
 from pathlib import Path
 
+from deploy import deploy
+
 
 def nginx_init(ip: str | None, dns: str | None) -> None:
     if ip == None or dns == None:
@@ -9,14 +11,24 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         print("Exiting Nginx init function.")
         return
     rootcert_path = Path.home() / ".local" / "share" / "mkcert"
+    project_dir = Path(__file__).parent
     subprocess.run(
-        ["sudo", "mkdir", "-p", "/var/www"], check=False, text=True, shell=False
+        ["sudo", "mkdir", "-p", "/var/www/blue"], check=False, text=True, shell=False
+    )
+    subprocess.run(
+        ["sudo", "mkdir", "-p", "/var/www/green"], check=False, text=True, shell=False
     )
     subprocess.run(
         ["sudo", "mkdir", "-p", "/etc/nginx/certs"], check=False, text=True, shell=False
     )
     subprocess.run(
         ["sudo", "mkdir", "-p", "/etc/nginx/logs"], check=False, text=True, shell=False
+    )
+    subprocess.run(
+        ["sudo", "mkdir", "-p", "/etc/nginx/tealflip"],
+        check=False,
+        text=True,
+        shell=False,
     )
     subprocess.run(
         [
@@ -61,12 +73,14 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         text=True,
         shell=False,
     )
-    subprocess.run(
-        ["cp", f"{rootcert_path}/rootCA.pem", "./"], check=False, text=True, shell=False
+    print(
+        f"Copy rootCA pub key found in {rootcert_path}/rootCA.pem to add it to your Browser Certificates"
     )
 
     os.environ["DNS"] = dns
-    nginx_conf_text = Path("nginx_template.conf").read_text().replace("${DNS}", dns)
+    nginx_conf_text = (
+        Path(f"{project_dir}/nginx_template.conf").read_text().replace("${DNS}", dns)
+    )
 
     subprocess.run(
         ["sudo", "tee", "/etc/nginx/nginx.conf"],
@@ -75,3 +89,5 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         text=True,
         check=False,
     )
+
+    deploy()
