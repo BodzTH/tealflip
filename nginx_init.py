@@ -1,7 +1,6 @@
 import os
 import subprocess
 from pathlib import Path
-from sys import stdout
 
 from deploy import deploy
 
@@ -13,6 +12,7 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         return
     rootcert_path = Path.home() / ".local" / "share" / "mkcert"
     project_dir = Path(__file__).parent
+    user = os.getlogin()
     subprocess.run(
         [
             "sudo",
@@ -46,7 +46,14 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         stderr=subprocess.DEVNULL,
     )
     subprocess.run(
-        ["sudo", "chown", "-R", "nginx:nginx", "/var/www"],
+        ["sudo", "chown", "-R", f"{user}:{user}", "/var/www"],
+        check=False,
+        text=True,
+        shell=False,
+        stdout=subprocess.DEVNULL,
+    )
+    subprocess.run(
+        ["sudo", "chmod", "-R", "766", "/var/www"],
         check=False,
         text=True,
         shell=False,

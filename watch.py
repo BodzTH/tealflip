@@ -1,7 +1,9 @@
 import subprocess
 from pathlib import Path
+from re import sub
 
 from config import PROJECT_PATH, REPO_URL
+from deploy import deploy
 
 
 def watch() -> None:
@@ -37,6 +39,7 @@ def watch() -> None:
                 capture_output=True,
             ).stdout
         )
+        deploy()
     else:
         pass
 
