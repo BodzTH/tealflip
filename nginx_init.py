@@ -14,19 +14,16 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
     rootcert_path = Path.home() / ".local" / "share" / "mkcert"
     project_dir = Path(__file__).parent
     subprocess.run(
-        ["sudo", "mkdir", "-p", "/var/www/blue"], check=False, text=True, shell=False
-    )
-    subprocess.run(
-        ["sudo", "mkdir", "-p", "/var/www/green"], check=False, text=True, shell=False
-    )
-    subprocess.run(
-        ["sudo", "mkdir", "-p", "/etc/nginx/certs"], check=False, text=True, shell=False
-    )
-    subprocess.run(
-        ["sudo", "mkdir", "-p", "/etc/nginx/logs"], check=False, text=True, shell=False
-    )
-    subprocess.run(
-        ["sudo", "mkdir", "-p", "/etc/nginx/tealflip"],
+        [
+            "sudo",
+            "mkdir",
+            "-p",
+            "/var/www/blue",
+            "/var/www/green",
+            "/etc/nginx/certs",
+            "/etc/nginx/logs",
+            "/etc/nginx/tealflip",
+        ],
         check=False,
         text=True,
         shell=False,
