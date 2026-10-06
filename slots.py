@@ -1,2 +1,2 @@
 active: str = "blue"
-idle: str = "blue"
+idle: str = "green"
