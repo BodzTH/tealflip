@@ -14,7 +14,7 @@ def status() -> None:
         Path(f"/var/www/{slots.active}/.git/refs/heads/main").read_text().strip("\n")
     )
     idle_ref = (
-        Path(f"/var/www/{slots.active}/.git/refs/heads/main").read_text().strip("\n")
+        Path(f"/var/www/{slots.idle}/.git/refs/heads/main").read_text().strip("\n")
     )
 
     print(f"\n{slots.active.capitalize()} Deployment Active!")
