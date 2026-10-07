@@ -8,7 +8,7 @@ from config import FIRST_DEPLOY, PROJECT_PATH
 def deploy() -> None:
     project_dir = Path(__file__).parent
     if FIRST_DEPLOY:
-        print("\nFirst Deploy!, Deploying on Blue slot.")
+        print(f"\nFirst Deploy!, Deploying on {slots.active.capitalize()} slot.")
 
         try:
             subprocess.run(
