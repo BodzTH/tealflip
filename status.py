@@ -1,16 +1,22 @@
 from pathlib import Path
 
+import slots
+
 
 def status() -> None:
     try:
-        active_slot = Path("/etc/nginx/tealflip/active_slot.conf").read_text()
+        Path("/etc/nginx/tealflip/active_slot.conf").exists()
     except FileNotFoundError:
         print("active_slot.conf in /etc/nginx/tealflip/ DOES NOT EXIST!")
         return
 
-    if "blue" in active_slot:
-        print("Blue Deployment Active!")
-    elif "green" in active_slot:
-        print("Green Deployment Active!")
-    else:
-        print("Nothing Deployed!")
+    active_ref = (
+        Path(f"/var/www/{slots.active}/.git/refs/heads/main").read_text().strip("\n")
+    )
+    idle_ref = (
+        Path(f"/var/www/{slots.active}/.git/refs/heads/main").read_text().strip("\n")
+    )
+
+    print(f"\n{slots.active.capitalize()} Deployment Active!")
+    print(f"\nActive Slot Commit Hash: {active_ref}")
+    print(f"\nIdle Slot Commit Hash: {idle_ref}")

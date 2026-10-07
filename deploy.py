@@ -31,6 +31,7 @@ def deploy() -> None:
                 check=True,
             )
         except subprocess.CalledProcessError:
+            print("\nDeploy Function Failed!")
             return
         except FileNotFoundError:
             print("/etc/nginx/tealflip/ Directory DOES NOT EXIST!")

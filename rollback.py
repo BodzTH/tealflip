@@ -31,12 +31,12 @@ def rollback() -> None:
         slots.idle = "green"
         slots.active = "blue"
         print("\nDeploying on Blue slot.")
-        print("\nGreen is Active, Green is Idle.")
+        print("\nBlue is Active, Green is Idle.")
     elif "green" in slots.rolled_back:
         slots.idle = "blue"
         slots.active = "green"
         print("\nDeploying on Green slot.")
-        print("\nBlue is Active, Blue is Idle.")
+        print("\nGreen is Active, Blue is Idle.")
     else:
         print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
         return
