@@ -64,7 +64,7 @@ def deploy() -> None:
         print("\nDeploying on Blue slot.")
         print("\nBlue is Active, Green is Idle.")
     else:
-        print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!")
+        print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
         return
 
     subprocess.run(
