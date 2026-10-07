@@ -26,8 +26,10 @@ def watch() -> None:
         return
 
     last_commit = remote_status.split("\t")[0]
-    refs_main = Path(f"{PROJECT_PATH}/.git/refs/heads/main").read_text().strip("\n")
-    if last_commit != refs_main:
+    project_commit = (
+        Path(f"{PROJECT_PATH}/.git/refs/heads/main").read_text().strip("\n")
+    )
+    if last_commit != project_commit:
         try:
             git_pull = subprocess.run(
                 [
@@ -48,8 +50,11 @@ def watch() -> None:
 
             deploy()
 
-        except subprocess.CalledProcessError:
-            print(git_pull.stderr)
+        except subprocess.CalledProcessError as e:
+            print(e.stderr)
             return
     else:
         print("Last Commit Already Deployed!")
+
+
+watch()
