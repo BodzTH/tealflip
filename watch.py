@@ -40,13 +40,14 @@ def watch() -> None:
                     ],
                     text=True,
                     shell=False,
-                    check=False,
+                    check=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                 ).stdout
             )
             deploy()
         except subprocess.CalledProcessError:
+            print("Error")
             return
     else:
         print("Last Commit Already Deployed!")
