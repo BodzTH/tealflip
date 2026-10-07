@@ -1,5 +1,6 @@
 import subprocess
 from pathlib import Path
+from sys import stderr
 
 from config import PROJECT_PATH, REPO_URL
 from deploy import deploy
@@ -28,26 +29,27 @@ def watch() -> None:
     refs_main = Path(f"{PROJECT_PATH}/.git/refs/heads/main").read_text().strip("\n")
     if last_commit != refs_main:
         try:
-            print(
-                subprocess.run(
-                    [
-                        "git",
-                        "-C",
-                        f"{PROJECT_PATH}",
-                        "pull",
-                        "origin",
-                        "main",
-                    ],
-                    text=True,
-                    shell=False,
-                    check=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                ).stdout
+            git_pull = subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    f"{PROJECT_PATH}",
+                    "pull",
+                    "origin",
+                    "main",
+                ],
+                text=True,
+                shell=False,
+                check=True,
+                capture_output=True,
             )
+
+            print(git_pull.stdout)
+
             deploy()
+
         except subprocess.CalledProcessError:
-            print("Error")
+            print(git_pull.stderr)
             return
     else:
         print("Last Commit Already Deployed!")
