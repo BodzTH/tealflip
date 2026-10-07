@@ -20,7 +20,6 @@ parser_init = subparsers.add_parser(
     help="Initialize files and configurations",
 ).set_defaults(func=init)
 
-
 parser_status = subparsers.add_parser(
     "status", description="tealflip status", help="Shows current active slot"
 ).set_defaults(func=status)

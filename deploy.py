@@ -25,7 +25,7 @@ def deploy() -> None:
             )
             subprocess.run(
                 ["sudo", "tee", "/etc/nginx/tealflip/active_slot.conf"],
-                input=f"root /var/www/{slots.active}",
+                input=f"root /var/www/{slots.active};",
                 stdout=subprocess.DEVNULL,
                 text=True,
                 check=True,
@@ -76,7 +76,7 @@ def deploy() -> None:
 
     subprocess.run(
         ["sudo", "tee", "/etc/nginx/tealflip/active_slot.conf"],
-        input=f"root /var/www/{slots.active}",
+        input=f"root /var/www/{slots.active};",
         stdout=subprocess.DEVNULL,
         text=True,
         check=False,

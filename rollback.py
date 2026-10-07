@@ -18,7 +18,7 @@ def rollback() -> None:
 
     subprocess.run(
         ["sudo", "tee", "/etc/nginx/tealflip/active_slot.conf"],
-        input=f"root /var/www/{slots.idle}",
+        input=f"root /var/www/{slots.idle};",
         stdout=subprocess.DEVNULL,
         text=True,
         check=False,
