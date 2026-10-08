@@ -32,8 +32,19 @@ def deploy() -> None:
         except FileNotFoundError:
             print("/etc/nginx/tealflip/ Directory DOES NOT EXIST!")
             return
-        Path(f"{project_dir}/tealflip-git-watcher.service").read_text().replace(
-            "{USER}", os.getlogin()
+
+        service_file = (
+            Path(f"{project_dir}/tealflip-git-watcher.service")
+            .read_text()
+            .replace("{USER}", os.getlogin())
+        )
+
+        subprocess.run(
+            ["tee", f"{project_dir}/tealflip-git-watcher.service"],
+            input=service_file,
+            stdout=subprocess.DEVNULL,
+            text=True,
+            check=False,
         )
         subprocess.run(
             [
@@ -47,6 +58,33 @@ def deploy() -> None:
             text=True,
             shell=False,
         )
+
+        sudoer_file = (
+            Path(f"{project_dir}/tealflip_sudoer")
+            .read_text()
+            .replace("{USER}", os.getlogin())
+        )
+
+        subprocess.run(
+            ["tee", f"{project_dir}/tealflip_sudoer"],
+            input=sudoer_file,
+            stdout=subprocess.DEVNULL,
+            text=True,
+            check=False,
+        )
+
+        subprocess.run(
+            [
+                "sudo",
+                "cp",
+                f"{project_dir}/tealflip_sudoer",
+                "/etc/sudoers.d/",
+            ],
+            check=False,
+            text=True,
+            shell=False,
+        )
+
         try:
             subprocess.run(
                 [

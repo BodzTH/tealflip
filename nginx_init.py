@@ -53,7 +53,7 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         stdout=subprocess.DEVNULL,
     )
     subprocess.run(
-        ["sudo", "chmod", "-R", "755", "/var/www"],
+        ["sudo", "chown", "-R", f"{user}:{user}", "/etc/nginx/tealflip"],
         check=False,
         text=True,
         shell=False,
