@@ -11,8 +11,8 @@ def watch() -> None:
             [
                 "git",
                 "ls-remote",
-                "-b",
                 f"{REPO_URL}",
+                "main",
             ],
             text=True,
             shell=False,

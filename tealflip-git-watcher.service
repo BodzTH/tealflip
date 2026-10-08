@@ -3,4 +3,5 @@ Description=TealFlip Git Watcher Service
 
 [Service]
 Type=oneshot
-ExecStart=/home/tex/.local/bin/tealflip watch
+User={USER}
+ExecStart=/home/{USER}/.local/bin/tealflip watch

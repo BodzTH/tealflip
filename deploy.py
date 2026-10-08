@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 
@@ -31,7 +32,9 @@ def deploy() -> None:
         except FileNotFoundError:
             print("/etc/nginx/tealflip/ Directory DOES NOT EXIST!")
             return
-
+        Path(f"{project_dir}/tealflip-git-watcher.service").read_text().replace(
+            "{USER}", os.getlogin()
+        )
         subprocess.run(
             [
                 "sudo",
