@@ -10,12 +10,23 @@ def status() -> None:
         print("active_slot.conf in /etc/nginx/tealflip/ DOES NOT EXIST!")
         return
 
-    active_ref = (
-        Path(f"/var/www/{slots.active}/.git/refs/heads/main").read_text().strip("\n")
-    )
-    idle_ref = (
-        Path(f"/var/www/{slots.idle}/.git/refs/heads/main").read_text().strip("\n")
-    )
+    if Path(f"/var/www/{slots.active}/index.html").is_file():
+        active_ref = (
+            Path(f"/var/www/{slots.active}/.git/refs/heads/main")
+            .read_text()
+            .strip("\n")
+        )
+    else:
+        print(f"index.html does not exist in {slots.active} slot!")
+        return
+
+    if Path(f"/var/www/{slots.idle}/index.html").is_file():
+        idle_ref = (
+            Path(f"/var/www/{slots.idle}/.git/refs/heads/main").read_text().strip("\n")
+        )
+    else:
+        print(f"index.html does not exist in {slots.idle} slot!")
+        return
 
     print(f"\n{slots.active.capitalize()} Deployment Active!")
     print(f"\nActive Slot Commit Hash: {active_ref}")

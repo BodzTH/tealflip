@@ -1,6 +1,5 @@
 import subprocess
 from pathlib import Path
-from sys import stderr
 
 from config import PROJECT_PATH, REPO_URL
 from deploy import deploy
@@ -12,9 +11,10 @@ def watch() -> None:
             [
                 "git",
                 "ls-remote",
-                "-h",
+                "-b",
                 "--refs",
                 f"{REPO_URL}",
+                "refs/heads/main",
             ],
             text=True,
             shell=False,
@@ -55,6 +55,3 @@ def watch() -> None:
             return
     else:
         print("Last Commit Already Deployed!")
-
-
-watch()

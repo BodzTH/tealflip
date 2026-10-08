@@ -4,6 +4,7 @@ from pathlib import Path
 
 from config import DNS, IP
 from nginx_init import nginx_init
+from status import status
 
 
 def check_shell() -> str:
@@ -116,3 +117,5 @@ def init():
         )
 
     nginx_init(IP, DNS)
+
+    status()

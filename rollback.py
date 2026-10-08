@@ -1,8 +1,8 @@
-import subprocess
 from pathlib import Path
 
 import slots
 from config import INITIALIZED
+from switch import switch
 
 
 def rollback() -> None:
@@ -16,13 +16,8 @@ def rollback() -> None:
 
     print(f"\nRolling back to {slots.idle} slot")
 
-    subprocess.run(
-        ["sudo", "tee", "/etc/nginx/tealflip/active_slot.conf"],
-        input=f"root /var/www/{slots.idle};",
-        stdout=subprocess.DEVNULL,
-        text=True,
-        check=False,
-    )
+    switch(slots.idle)
+
     slots.rolled_back = slots.idle
 
     project_dir = Path(__file__).parent

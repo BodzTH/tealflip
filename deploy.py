@@ -3,6 +3,7 @@ from pathlib import Path
 
 import slots
 from config import INITIALIZED, PROJECT_PATH
+from switch import switch
 
 
 def deploy() -> None:
@@ -23,13 +24,7 @@ def deploy() -> None:
                 text=True,
                 check=True,
             )
-            subprocess.run(
-                ["sudo", "tee", "/etc/nginx/tealflip/active_slot.conf"],
-                input=f"root /var/www/{slots.active};",
-                stdout=subprocess.DEVNULL,
-                text=True,
-                check=True,
-            )
+            switch(slots.active)
         except subprocess.CalledProcessError:
             print("\nDeploy Function Failed!")
             return
@@ -75,13 +70,9 @@ def deploy() -> None:
         check=False,
     )
 
-    subprocess.run(
-        ["sudo", "tee", "/etc/nginx/tealflip/active_slot.conf"],
-        input=f"root /var/www/{slots.active};",
-        stdout=subprocess.DEVNULL,
-        text=True,
-        check=False,
-    )
+    switch(slots.active)
 
     with open(f"{project_dir}/slots.py", "w") as file:
-        file.write(f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"')
+        file.write(
+            f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nrolled_back: str = "{slots.rolled_back}"'
+        )
