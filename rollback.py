@@ -2,12 +2,12 @@ import subprocess
 from pathlib import Path
 
 import slots
-from config import FIRST_DEPLOY
+from config import INITIALIZED
 
 
 def rollback() -> None:
-    if FIRST_DEPLOY:
-        print("\nNothin Deployed!, Exiting Rollback.")
+    if not INITIALIZED:
+        print("\nTealFlip is not Initialized!, Exiting Rollback.")
         return
 
     if slots.active == slots.rolled_back:

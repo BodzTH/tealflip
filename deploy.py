@@ -2,13 +2,13 @@ import subprocess
 from pathlib import Path
 
 import slots
-from config import FIRST_DEPLOY, PROJECT_PATH
+from config import INITIALIZED, PROJECT_PATH
 
 
 def deploy() -> None:
     project_dir = Path(__file__).parent
-    if FIRST_DEPLOY:
-        print(f"\nFirst Deploy!, Deploying on {slots.active.capitalize()} slot.")
+    if not INITIALIZED:
+        print(f"\nInitializing!, Deploying on {slots.active.capitalize()} slot.")
 
         try:
             subprocess.run(
@@ -42,8 +42,8 @@ def deploy() -> None:
 
         with open(f"{project_dir}/config.py", "w") as file:
             for line in lines:
-                if "FIRST_DEPLOY" in line:
-                    file.write("FIRST_DEPLOY: bool = False\n")
+                if "INITIALIZED" in line:
+                    file.write("INITIALIZED: bool = True\n")
                 else:
                     file.write(line)
         return
