@@ -1,0 +1,9 @@
+[Unit]
+Description=TealFlip Git Watcher Timer
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=1min
+
+[Install]
+WantedBy=timers.target

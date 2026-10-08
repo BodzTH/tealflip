@@ -32,6 +32,35 @@ def deploy() -> None:
             print("/etc/nginx/tealflip/ Directory DOES NOT EXIST!")
             return
 
+        subprocess.run(
+            [
+                "sudo",
+                "cp",
+                f"{project_dir}/tealflip-git-watcher.service",
+                f"{project_dir}/tealflip-git-watcher.timer",
+                "/etc/systemd/system/",
+            ],
+            check=False,
+            text=True,
+            shell=False,
+        )
+        try:
+            subprocess.run(
+                [
+                    "sudo",
+                    "systemctl",
+                    "enable",
+                    "--now",
+                    "/etc/systemd/system/tealflip-git-watcher.timer",
+                ],
+                check=True,
+                text=True,
+                shell=False,
+            )
+        except subprocess.CalledProcessError as e:
+            print(e.stderr)
+            return
+
         with open(f"{project_dir}/config.py", "r") as file:
             lines = file.readlines()
 

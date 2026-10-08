@@ -1,0 +1,6 @@
+[Unit]
+Description=TealFlip Git Watcher Service
+
+[Service]
+Type=oneshot
+ExecStart=/home/tex/.local/bin/tealflip watch

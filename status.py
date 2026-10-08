@@ -20,14 +20,15 @@ def status() -> None:
         print(f"index.html does not exist in {slots.active} slot!")
         return
 
+    print(f"\n{slots.active.capitalize()} Deployment Active!")
+    print(f"\nActive Slot Commit Hash: {active_ref}")
+
     if Path(f"/var/www/{slots.idle}/index.html").is_file():
         idle_ref = (
             Path(f"/var/www/{slots.idle}/.git/refs/heads/main").read_text().strip("\n")
         )
     else:
-        print(f"index.html does not exist in {slots.idle} slot!")
+        print(f"{slots.idle} slot is empty")
         return
 
-    print(f"\n{slots.active.capitalize()} Deployment Active!")
-    print(f"\nActive Slot Commit Hash: {active_ref}")
     print(f"\nIdle Slot Commit Hash: {idle_ref}")
