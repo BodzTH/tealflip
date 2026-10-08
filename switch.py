@@ -2,13 +2,15 @@ import subprocess
 from pathlib import Path
 
 from nginx_reload import nginx_reload
-from rollback import rollback
-
-# import slots
 
 
-def switch(slot) -> None:
-    # project_dir = Path(__file__).parent
+def switch(slot) -> bool:
+    current_slot = (
+        Path("/etc/nginx/tealflip/active_slot.conf")
+        .read_text()
+        .split("/")[3]
+        .strip(";")
+    )
     if Path(f"/var/www/{slot}/index.html").is_file():
         subprocess.run(
             ["tee", "/etc/nginx/tealflip/active_slot.conf"],
@@ -19,14 +21,21 @@ def switch(slot) -> None:
         )
     else:
         print(f"index.html does not exist in {slot} slot, switching CANCELD!")
-        return
+        return False
 
     if nginx_reload():
         print("\nNgnix Reloaded Successfully.")
     else:
-        print("\nNgnix Failed to Reload!, rolling back to previous slot.")
-        rollback()
-        return
+        print(
+            f"\nNgnix Failed to Reload!, rolling back to previous {current_slot} slot."
+        )
+        subprocess.run(
+            ["tee", "/etc/nginx/tealflip/active_slot.conf"],
+            input=f"root /var/www/{current_slot};",
+            stdout=subprocess.DEVNULL,
+            text=True,
+            check=False,
+        )
+        return False
 
-    # with open(f"{project_dir}/slots.py", "w") as file:
-    #     file.write(f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"')
+    return True

@@ -114,17 +114,22 @@ def deploy() -> None:
         return
 
     try:
-        active_slot = Path("/etc/nginx/tealflip/active_slot.conf").read_text()
+        current_slot = (
+            Path("/etc/nginx/tealflip/active_slot.conf")
+            .read_text()
+            .split("/")[3]
+            .strip(";")
+        )
     except FileNotFoundError:
         print("active_slot.conf in /etc/nginx/tealflip/ DOES NOT EXIST!")
         return
 
-    if "blue" in active_slot:
+    if "blue" == current_slot:
         slots.idle = "blue"
         slots.active = "green"
         print("\nDeploying on Green slot.")
         print("\nGreen is Active, Blue is Idle.")
-    elif "green" in active_slot:
+    elif "green" == current_slot:
         slots.idle = "green"
         slots.active = "blue"
         print("\nDeploying on Blue slot.")
@@ -140,7 +145,11 @@ def deploy() -> None:
         check=False,
     )
 
-    switch(slots.active)
+    if switch(slots.active):
+        print(f"\nSwitching to {slots.active} Succeeded.")
+    else:
+        print(f"\nSwitching to {slots.active} Failed!")
+        return
 
     with open(f"{project_dir}/slots.py", "w") as file:
         file.write(

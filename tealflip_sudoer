@@ -1,1 +1,1 @@
-{USER} ALL=(root) /usr/bin/nginx
+{USER} ALL=(root) NOPASSWD: /usr/bin/nginx -t, /usr/bin/nginx -s reload

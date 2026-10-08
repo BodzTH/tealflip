@@ -18,7 +18,11 @@ def rollback() -> None:
 
     switch(slots.idle)
 
-    slots.rolled_back = slots.idle
+    if switch(slots.active):
+        print(f"\nSwitching to {slots.active} Succeeded.")
+    else:
+        print(f"\nSwitching to {slots.active} Failed!")
+        return
 
     project_dir = Path(__file__).parent
 
@@ -27,7 +31,7 @@ def rollback() -> None:
         slots.active = "blue"
         print("\nDeploying on Blue slot.")
         print("\nBlue is Active, Green is Idle.")
-    elif "green" in slots.rolled_back:
+    elif "green" == slots.rolled_back:
         slots.idle = "blue"
         slots.active = "green"
         print("\nDeploying on Green slot.")
