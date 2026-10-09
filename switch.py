@@ -1,10 +1,17 @@
 import subprocess
 from pathlib import Path
 
+import slots
 from nginx_reload import nginx_reload
 
 
 def switch(slot) -> bool:
+
+    project_dir = Path(__file__).parent
+
+    last_good_commit: str = slots.last_good_commit
+    last_bad_commit: str = slots.last_bad_commit
+
     current_slot = (
         Path("/etc/nginx/tealflip/active_slot.conf")
         .read_text()
@@ -25,10 +32,25 @@ def switch(slot) -> bool:
 
     if nginx_reload():
         print("\nNgnix Reloaded Successfully.")
+        last_good_commit = (
+            Path(f"/var/www/{slot}/.git/refs/heads/main").read_text().strip("\n")
+        )
+        with open(f"{project_dir}/slots.py", "w") as file:
+            file.write(
+                f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
+            )
     else:
         print(
             f"\nNgnix Failed to Reload!, rolling back to previous {current_slot} slot."
         )
+        last_bad_commit = (
+            Path(f"/var/www/{slot}/.git/refs/heads/main").read_text().strip("\n")
+        )
+        with open(f"{project_dir}/slots.py", "w") as file:
+            file.write(
+                f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
+            )
+
         subprocess.run(
             ["tee", "/etc/nginx/tealflip/active_slot.conf"],
             input=f"root /var/www/{current_slot};",

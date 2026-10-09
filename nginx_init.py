@@ -2,11 +2,12 @@ import os
 import subprocess
 from pathlib import Path
 
+from config import DNS, IP
 from deploy import deploy
 
 
-def nginx_init(ip: str | None, dns: str | None) -> None:
-    if ip == None or dns == None:
+def nginx_init() -> None:
+    if IP == None or DNS == None:
         print("IP/DNS Environment variables not set!")
         print("Exiting Nginx init function.")
         return
@@ -74,8 +75,8 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
             "cert.pem",
             "-key-file",
             "key.pem",
-            f"{dns}",
-            f"{ip}",
+            f"{DNS}",
+            f"{IP}",
             "localhost",
         ],
         check=False,
@@ -100,9 +101,9 @@ def nginx_init(ip: str | None, dns: str | None) -> None:
         f"Copy rootCA pub key in {rootcert_path}/rootCA.pem and add it to your Browser Certificates"
     )
 
-    os.environ["DNS"] = dns
+    os.environ["DNS"] = DNS
     nginx_conf_text = (
-        Path(f"{project_dir}/nginx_template.conf").read_text().replace("${DNS}", dns)
+        Path(f"{project_dir}/nginx_template.conf").read_text().replace("${DNS}", DNS)
     )
 
     subprocess.run(

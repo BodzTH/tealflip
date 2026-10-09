@@ -10,37 +10,33 @@ def rollback() -> None:
         print("\nTealFlip is not Initialized!, Exiting Rollback.")
         return
 
-    if slots.active == slots.rolled_back:
-        print(f"\n Already rolled back to {slots.active}!")
-        return
-
-    print(f"\nRolling back to {slots.idle} slot")
-
-    switch(slots.idle)
-
-    if switch(slots.active):
-        print(f"\nSwitching to {slots.active} Succeeded.")
-    else:
-        print(f"\nSwitching to {slots.active} Failed!")
-        return
-
     project_dir = Path(__file__).parent
 
-    if "blue" == slots.rolled_back:
-        slots.idle = "green"
-        slots.active = "blue"
-        print("\nDeploying on Blue slot.")
-        print("\nBlue is Active, Green is Idle.")
-    elif "green" == slots.rolled_back:
-        slots.idle = "blue"
-        slots.active = "green"
-        print("\nDeploying on Green slot.")
-        print("\nGreen is Active, Blue is Idle.")
-    else:
-        print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
+    idle_ref = (
+        Path(f"/var/www/{slots.idle}/.git/refs/heads/main").read_text().strip("\n")
+    )
+
+    if slots.last_bad_commit == idle_ref:
+        print("Can not rollback to a bad commit!, Quiting.")
         return
+
+    print(f"\nRolling back from {slots.active} slot to {slots.idle}")
+
+    slots.last_bad_commit = (
+        Path(f"/var/www/{slots.active}/.git/refs/heads/main").read_text().strip("\n")
+    )
+
+    if switch(slots.idle):
+        print(f"\nSwitching to {slots.idle} Succeeded.")
+
+    else:
+        print(f"\nSwitching to {slots.idle} Failed!")
+        return
+
+    print(f"\nDeploying on {slots.idle.capitalize()} slot.")
+    print(f"\n{slots.idle.capitalize()} is Active, {slots.idle.capitalize()} is Idle.")
 
     with open(f"{project_dir}/slots.py", "w") as file:
         file.write(
-            f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nrolled_back: str = "{slots.rolled_back}"'
+            f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nlast_good_commit: str = "{slots.last_good_commit}"\nlast_bad_commit: str = "{slots.last_bad_commit}"'
         )

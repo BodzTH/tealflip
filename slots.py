@@ -1,3 +1,4 @@
 active: str = "blue"
 idle: str = "green"
-rolled_back: str = ""
+last_good_commit: str = ""
+last_bad_commit: str = ""

@@ -25,12 +25,16 @@ def deploy() -> None:
                 text=True,
                 check=True,
             )
-            switch(slots.active)
-        except subprocess.CalledProcessError:
-            print("\nDeploy Function Failed!")
+            if switch(slots.active):
+                print(f"\nSwitching to {slots.active} Succeeded.")
+            else:
+                print(f"\nSwitching to {slots.active} Failed!")
+                raise subprocess.CalledProcessError
+        except subprocess.CalledProcessError as e:
+            print("\nDeploy Failed!\n", e.stderr)
             return
         except FileNotFoundError:
-            print("/etc/nginx/tealflip/ Directory DOES NOT EXIST!")
+            print("\n/etc/nginx/tealflip/ Directory DOES NOT EXIST!")
             return
 
         service_file = (
@@ -153,5 +157,5 @@ def deploy() -> None:
 
     with open(f"{project_dir}/slots.py", "w") as file:
         file.write(
-            f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nrolled_back: str = "{slots.rolled_back}"'
+            f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nlast_good_commit: str = "{slots.last_good_commit}"\nlast_bad_commit: str = "{slots.last_bad_commit}"'
         )

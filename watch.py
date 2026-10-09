@@ -12,7 +12,7 @@ def watch() -> None:
                 "git",
                 "ls-remote",
                 f"{REPO_URL}",
-                "main",
+                "refs/heads/main",
             ],
             text=True,
             shell=False,

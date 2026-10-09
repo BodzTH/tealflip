@@ -7,7 +7,7 @@ from nginx_init import nginx_init
 from status import status
 
 
-def check_shell() -> str:
+def shell_name() -> str:
     """
     ps: to check for running process
     -p: to select PID
@@ -31,9 +31,9 @@ def check_shell() -> str:
     return shell.strip("\n")  # remove trailing end line from shell name
 
 
-def replace_export_line(path: Path, config_file: Path, env_line: str):
+def replace_export_line(path: Path, config_file: Path):
     for text in config_file.read_text().split("\n"):
-        if env_line in text:
+        if "PATH=" in text:
             splitted_path = text.split()[1]
             add_path = (
                 "\n" + splitted_path[:-1] + f':{path}"' + " # added by tealflip" + "\n"
@@ -46,28 +46,29 @@ def replace_export_line(path: Path, config_file: Path, env_line: str):
 
     with config_file.open("w") as file:
         for line in lines:
-            if env_line in line:
+            if "PATH=" in line:
                 file.write(add_path)
             else:
                 file.write(line)
 
 
-def add_path_env(path: Path, config_file: Path, env: str, env_line: str) -> None:
-    env_value = os.getenv(env)
+def add_path_env(bin_path: Path, shell_config_file: Path) -> None:
+    path_value = os.getenv("PATH")
 
-    if (env_value == None) or (
-        (str(path) not in env_value) and (str(path) not in config_file.read_text())
+    if (path_value == None) or (
+        (str(bin_path) not in path_value)
+        and (str(bin_path) not in shell_config_file.read_text())
     ):
-        with config_file.open("a") as file:
-            file.write(f'\nexport {env_line}"${env}:{path}"\n')
-            print(f"Run: source {config_file}\n")
+        with shell_config_file.open("a") as file:
+            file.write(f'\nexport PATH="$PATH:{bin_path}"\n')
+            print(f"Run: source {shell_config_file}\n")
             return
 
-    elif str(path) in env_value:
+    elif str(bin_path) in path_value:
         return
 
     else:
-        replace_export_line(path, config_file, env_line)
+        replace_export_line(bin_path, shell_config_file)
 
 
 def init():
@@ -75,14 +76,20 @@ def init():
         print("Already Initialized!")
         return
     # Initializing Variables
-    local_bin_path = (
-        Path.home() / ".local" / "bin"
-    )  # Absolute path to .local/bin directory
+    bin_path = Path.home() / ".local" / "bin"  # Absolute path to .local/bin directory
     shell_config_file = Path.home() / ".bashrc"  # Shell Configuration File
-    shell = check_shell()  # shell name
+    shell = shell_name()  # shell name
 
-    # making .local/bin directory if does not exist
-    local_bin_path.mkdir(parents=True, exist_ok=True)
+    # making a bin directory if does not exist
+    try:
+        bin_path.mkdir(parents=True, exist_ok=True)
+    except PermissionError:
+        subprocess.run(
+            ["sudo", "mkdir", "-p", f"{bin_path}"],
+            check=False,
+            text=True,
+            shell=False,
+        )
 
     # Assiging the shell configuration path for working shell
     if shell == "bash":
@@ -95,7 +102,7 @@ def init():
         print("Unknown Shell, try:\n", "Bash", "Zshell", "Fish")
 
     # Adding .local/bin directory to PATH if not set
-    add_path_env(local_bin_path, shell_config_file, "PATH", "PATH=")
+    add_path_env(bin_path, shell_config_file)
 
     """
     ln: link a second file to first file 
@@ -106,16 +113,19 @@ def init():
     check=False: so if a command fails with a non-zero exit code it does not raise CalledProcessError exception
     shell=False: so python does not treat onlythe first item as command and rest as arguments
     """
-    if not os.path.isfile(
-        f"{local_bin_path}/tealflip"
-    ):  # if tealflip symlink does not exist in .local/bin
+    if os.path.isfile(
+        f"{bin_path}/tealflip"
+    ):  # if tealflip symlink exist in bin directory
+        print(f"{bin_path}/tealflip Symlink Already Exist.")
+    else:
+        project_dir = Path(__file__).parent
         subprocess.run(
-            ["ln", "-s", f"{os.getcwd()}/tealflip", f"{local_bin_path}/tealflip"],
+            ["ln", "-s", f"{project_dir}/tealflip", f"{bin_path}/tealflip"],
             text=True,
             check=False,
             shell=False,
         )
 
-    nginx_init(IP, DNS)
+    nginx_init()
 
     status()
