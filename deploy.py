@@ -63,19 +63,31 @@ def deploy() -> None:
             shell=False,
         )
 
-        sudoer_file = (
-            Path(f"{project_dir}/tealflip_sudoer")
-            .read_text()
-            .replace("{USER}", os.getlogin())
-        )
+        tealflip_sudoer = f"{os.getlogin()} ALL=(root) NOPASSWD: /usr/bin/nginx -t, /usr/bin/nginx -s reload"
 
         subprocess.run(
-            ["tee", "/etc/sudoers.d/tealflip_sudoer"],
-            input=sudoer_file,
+            ["tee", f"{project_dir}/tealflip_sudoer"],
+            input=tealflip_sudoer,
             stdout=subprocess.DEVNULL,
             text=True,
             check=False,
         )
+
+        try:
+            Path(f"{project_dir}/tealflip_sudoer").is_file()
+            subprocess.run(
+                ["sudo", "visudo", "-c", f"{project_dir}/tealflip_sudoer"],
+                input=tealflip_sudoer,
+                stdout=subprocess.DEVNULL,
+                text=True,
+                check=True,
+            )
+        except FileNotFoundError:
+            print(f"tealflip_sudoer in {project_dir} DOES NOT EXIST!, Quiting.")
+            return
+        except subprocess.CalledProcessError:
+            print("tealflip_sudoer Parsing Failed!, Quiting.")
+            return
 
         subprocess.run(
             [
