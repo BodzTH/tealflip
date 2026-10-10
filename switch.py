@@ -117,7 +117,7 @@ def switch(is_deployment: bool) -> bool:
 
     if nginx_reload():
         print(
-            f"\n{slots.active.capitalize()} is Active, {slots.idle.capitalize()} is Idle.\n"
+            f"\n{slots.active.capitalize()} is Active, {slots.idle.capitalize()} is Idle."
         )
 
         last_good_commit = (
@@ -149,7 +149,7 @@ def switch(is_deployment: bool) -> bool:
         )
 
         print(
-            f"\n{slots.idle.capitalize()} is Active, {slots.active.capitalize()} is Idle.\n"
+            f"\n{slots.idle.capitalize()} is Active, {slots.active.capitalize()} is Idle."
         )
         with open(f"{project_dir}/slots.py", "w") as file:
             file.write(
