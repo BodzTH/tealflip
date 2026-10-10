@@ -10,16 +10,16 @@ def rollback() -> None:
         print("\nTealFlip is not Initialized!, Exiting Rollback.")
         return
 
-    idle_ref = (
-        Path(f"/var/www/{slots.idle}/.git/refs/heads/main").read_text().strip("\n")
-    )
+    try:
+        idle_ref = (
+            Path(f"/var/www/{slots.idle}/.git/refs/heads/main").read_text().strip("\n")
+        )
+    except FileNotFoundError:
+        print("Can not rollback!, Nothing were deployed to idle slot.")
+        return
 
     if slots.last_bad_commit == idle_ref:
         print("Can not rollback to a bad commit!, Quiting.")
         return
 
-    if switch(False):
-        print(f"\nSwitching to {slots.active.capitalize()} Succeeded.")
-    else:
-        print(f"\nSwitching to {slots.active.capitalize()} Failed!")
-        return
+    switch(False)

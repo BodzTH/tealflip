@@ -12,8 +12,7 @@ def nginx_reload() -> bool:
             check=True,
             text=True,
             shell=False,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            capture_output=True,
         )
     except subprocess.CalledProcessError as e:
         print(e.stderr)
@@ -29,8 +28,7 @@ def nginx_reload() -> bool:
             check=True,
             text=True,
             shell=False,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            capture_output=True,
         )
     except subprocess.CalledProcessError as e:
         print(e.stderr)

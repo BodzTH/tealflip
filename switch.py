@@ -6,7 +6,7 @@ from config import INITIALIZED, PROJECT_PATH
 from nginx_reload import nginx_reload
 
 
-def switch(is_deployment: bool) -> bool:
+def switch(is_deployment: bool) -> None:
 
     if not INITIALIZED:
         subprocess.run(
@@ -16,7 +16,7 @@ def switch(is_deployment: bool) -> bool:
             text=True,
             check=False,
         )
-        return True
+        return
 
     project_dir = Path(__file__).parent
 
@@ -32,7 +32,7 @@ def switch(is_deployment: bool) -> bool:
         )
     except FileNotFoundError:
         print("active_slot.conf in /etc/nginx/tealflip/ DOES NOT EXIST!")
-        return False
+        return
 
     if is_deployment:
         active_commit = (
@@ -45,7 +45,7 @@ def switch(is_deployment: bool) -> bool:
         )
         if project_commit == active_commit:
             print("Active Deployment already has latest commit!")
-            return False
+            return
 
         if Path(f"{PROJECT_PATH}/index.html").is_file():
             if "blue" == active_slot:
@@ -56,7 +56,7 @@ def switch(is_deployment: bool) -> bool:
                 slots.active = "blue"
             else:
                 print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
-                return False
+                return
 
             subprocess.run(
                 [
@@ -83,7 +83,7 @@ def switch(is_deployment: bool) -> bool:
 
         else:
             print(f"index.html does not exist in {PROJECT_PATH}, switching CANCELD!")
-            return False
+            return
     else:
         print(
             f"\nRolling back from {slots.active.capitalize()} slot to {slots.idle.capitalize()}"
@@ -103,7 +103,7 @@ def switch(is_deployment: bool) -> bool:
             slots.active = "blue"
         else:
             print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
-            return False
+            return
 
         subprocess.run(
             ["tee", "/etc/nginx/tealflip/active_slot.conf"],
@@ -114,6 +114,7 @@ def switch(is_deployment: bool) -> bool:
         )
 
     if nginx_reload():
+        print(f"\nSwitching to {slots.active.capitalize()} Succeeded.")
         print(
             f"\n{slots.active.capitalize()} is Active, {slots.idle.capitalize()} is Idle."
         )
@@ -129,8 +130,8 @@ def switch(is_deployment: bool) -> bool:
                 f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
             )
     else:
+        print(f"\nSwitching to {slots.active.capitalize()} Failed!")
         print(f"\nNgnix Failed to Reload!, rolling back to previous {slots.idle} slot.")
-        print(f"\nDeploying on {slots.idle.capitalize()} slot.")
 
         last_bad_commit = (
             Path(f"/var/www/{slots.active}/.git/refs/heads/main")
@@ -154,6 +155,6 @@ def switch(is_deployment: bool) -> bool:
                 f'active: str = "{slots.idle}"\nidle: str = "{slots.active}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
             )
 
-        return False
+        return
 
-    return True
+    return
