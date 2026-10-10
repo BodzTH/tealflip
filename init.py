@@ -2,7 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 
-from config import DNS, IP
+from config import DNS, INITIALIZED, IP
 from nginx_init import nginx_init
 from status import status
 
@@ -72,7 +72,7 @@ def add_path_env(bin_path: Path, shell_config_file: Path) -> None:
 
 
 def init():
-    if Path("/etc/nginx/tealflip/active_slot.conf").exists():
+    if INITIALIZED:
         print("Already Initialized!")
         return
     # Initializing Variables

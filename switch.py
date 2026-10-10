@@ -2,10 +2,21 @@ import subprocess
 from pathlib import Path
 
 import slots
+from config import INITIALIZED
 from nginx_reload import nginx_reload
 
 
 def switch(input_slot: str) -> bool:
+
+    if not INITIALIZED:
+        subprocess.run(
+            ["tee", "/etc/nginx/tealflip/active_slot.conf"],
+            input=f"root /var/www/{slots.active};",
+            stdout=subprocess.DEVNULL,
+            text=True,
+            check=False,
+        )
+        return True
 
     project_dir = Path(__file__).parent
 
