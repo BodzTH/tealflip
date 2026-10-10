@@ -29,7 +29,7 @@ def deploy() -> None:
                 print(f"\nSwitching to {slots.active} Succeeded.")
             else:
                 print(f"\nSwitching to {slots.active} Failed!")
-                raise subprocess.CalledProcessError
+                return
         except subprocess.CalledProcessError as e:
             print("\nDeploy Failed!\n", e.stderr)
             return
@@ -117,29 +117,10 @@ def deploy() -> None:
                     file.write(line)
         return
 
-    try:
-        current_slot = (
-            Path("/etc/nginx/tealflip/active_slot.conf")
-            .read_text()
-            .split("/")[3]
-            .strip(";")
-        )
-    except FileNotFoundError:
-        print("active_slot.conf in /etc/nginx/tealflip/ DOES NOT EXIST!")
-        return
-
-    if "blue" == current_slot:
-        slots.idle = "blue"
-        slots.active = "green"
-        print("\nDeploying on Green slot.")
-        print("\nGreen is Active, Blue is Idle.")
-    elif "green" == current_slot:
-        slots.idle = "green"
-        slots.active = "blue"
-        print("\nDeploying on Blue slot.")
-        print("\nBlue is Active, Green is Idle.")
+    if switch(slots.active):
+        print(f"\nSwitching to {slots.active} Succeeded.")
     else:
-        print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
+        print(f"\nSwitching to {slots.active} Failed!")
         return
 
     subprocess.run(
@@ -148,14 +129,3 @@ def deploy() -> None:
         text=True,
         check=False,
     )
-
-    if switch(slots.active):
-        print(f"\nSwitching to {slots.active} Succeeded.")
-    else:
-        print(f"\nSwitching to {slots.active} Failed!")
-        return
-
-    with open(f"{project_dir}/slots.py", "w") as file:
-        file.write(
-            f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nlast_good_commit: str = "{slots.last_good_commit}"\nlast_bad_commit: str = "{slots.last_bad_commit}"'
-        )
