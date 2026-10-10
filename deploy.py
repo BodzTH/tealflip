@@ -70,7 +70,7 @@ def deploy() -> None:
         )
 
         subprocess.run(
-            ["tee", f"{project_dir}/tealflip_sudoer"],
+            ["tee", "/etc/sudoers.d/tealflip_sudoer"],
             input=sudoer_file,
             stdout=subprocess.DEVNULL,
             text=True,
