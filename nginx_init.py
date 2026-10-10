@@ -114,4 +114,14 @@ def nginx_init() -> None:
         check=False,
     )
 
+    slots_file = Path(f"{project_dir}/slots_template.py").read_text()
+
+    subprocess.run(
+        ["tee", f"{project_dir}/slots.py"],
+        input=slots_file,
+        stdout=subprocess.DEVNULL,
+        text=True,
+        check=False,
+    )
+
     deploy()

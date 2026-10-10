@@ -2,7 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 
-from config import DNS, INITIALIZED, IP
+from config import INITIALIZED
 from nginx_init import nginx_init
 from status import status
 
@@ -125,6 +125,16 @@ def init():
             check=False,
             shell=False,
         )
+
+    config_template = Path(f"{project_dir}/config_template.py").read_text()
+
+    subprocess.run(
+        ["tee", f"{project_dir}/config.py"],
+        input=config_template,
+        stdout=subprocess.DEVNULL,
+        text=True,
+        check=False,
+    )
 
     nginx_init()
 
