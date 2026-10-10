@@ -137,5 +137,5 @@ def deploy() -> None:
     if switch(True):
         print(f"\nSwitching to {slots.active.capitalize()} Succeeded.")
     else:
-        print(f"\nSwitching to {slots.active.capitalize()} Failed!")
+        print(f"\nSwitching to {slots.idle.capitalize()} Failed!")
         return

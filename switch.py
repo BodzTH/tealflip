@@ -51,11 +51,9 @@ def switch(is_deployment: bool) -> bool:
             if "blue" == active_slot:
                 slots.idle = "blue"
                 slots.active = "green"
-                print("\nDeploying on Green slot.")
             elif "green" == active_slot:
                 slots.idle = "green"
                 slots.active = "blue"
-                print("\nDeploying on Blue slot.")
             else:
                 print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
                 return False
