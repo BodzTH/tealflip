@@ -89,17 +89,22 @@ def deploy() -> None:
             print("tealflip_sudoer Parsing Failed!, Quiting.")
             return
 
-        subprocess.run(
-            [
-                "sudo",
-                "cp",
-                f"{project_dir}/tealflip_sudoer",
-                "/etc/sudoers.d/",
-            ],
-            check=True,
-            text=True,
-            shell=False,
-        )
+        try:
+            subprocess.run(
+                [
+                    "sudo",
+                    "cp",
+                    f"{project_dir}/tealflip_sudoer",
+                    "/etc/sudoers.d/",
+                ],
+                check=True,
+                text=True,
+                shell=False,
+            )
+
+        except subprocess.CalledProcessError:
+            print("copying tealflip_sudoer to /etc/sudoers.d/, Quiting.")
+            return
 
         try:
             subprocess.run(
