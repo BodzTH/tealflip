@@ -12,3 +12,4 @@ wheels/
 
 # Environment Variables
 config.py
+slots.py
