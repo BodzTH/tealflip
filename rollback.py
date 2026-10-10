@@ -18,15 +18,8 @@ def rollback() -> None:
         print("Can not rollback to a bad commit!, Quiting.")
         return
 
-    print(f"\nRolling back from {slots.active} slot to {slots.idle}")
-
-    slots.last_bad_commit = (
-        Path(f"/var/www/{slots.active}/.git/refs/heads/main").read_text().strip("\n")
-    )
-
-    if switch(slots.idle):
+    if switch(False):
         print(f"\nSwitching to {slots.idle} Succeeded.")
-
     else:
         print(f"\nSwitching to {slots.idle} Failed!")
         return

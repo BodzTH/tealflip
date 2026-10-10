@@ -25,7 +25,7 @@ def deploy() -> None:
                 text=True,
                 check=True,
             )
-            if switch(slots.active):
+            if switch(True):
                 print(f"\nSwitching to {slots.active} Succeeded.")
             else:
                 print(f"\nSwitching to {slots.active} Failed!")
@@ -134,15 +134,8 @@ def deploy() -> None:
                     file.write(line)
         return
 
-    if switch(slots.active):
+    if switch(True):
         print(f"\nSwitching to {slots.active} Succeeded.")
     else:
         print(f"\nSwitching to {slots.active} Failed!")
         return
-
-    subprocess.run(
-        ["rsync", "-a", "--delete", f"{PROJECT_PATH}/", f"/var/www/{slots.active}"],
-        stdout=subprocess.DEVNULL,
-        text=True,
-        check=False,
-    )

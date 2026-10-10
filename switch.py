@@ -2,11 +2,11 @@ import subprocess
 from pathlib import Path
 
 import slots
-from config import INITIALIZED
+from config import INITIALIZED, PROJECT_PATH
 from nginx_reload import nginx_reload
 
 
-def switch(input_slot: str) -> bool:
+def switch(is_deployment: bool) -> bool:
 
     if not INITIALIZED:
         subprocess.run(
@@ -24,7 +24,7 @@ def switch(input_slot: str) -> bool:
     last_bad_commit: str = slots.last_bad_commit
 
     try:
-        current_slot = (
+        active_slot = (
             Path("/etc/nginx/tealflip/active_slot.conf")
             .read_text()
             .split("/")[3]
@@ -34,56 +34,130 @@ def switch(input_slot: str) -> bool:
         print("active_slot.conf in /etc/nginx/tealflip/ DOES NOT EXIST!")
         return False
 
-    if Path(f"/var/www/{input_slot}/index.html").is_file():
+    if is_deployment:
+        active_commit = (
+            Path(f"/var/www/{slots.active}/.git/refs/heads/main")
+            .read_text()
+            .strip("\n")
+        )
+        project_commit = (
+            Path(f"{PROJECT_PATH}/.git/refs/heads/main").read_text().strip("\n")
+        )
+        if project_commit == active_commit:
+            print("Active Deployment already has latest commit!")
+            return False
+
+        if Path(f"{PROJECT_PATH}/index.html").is_file():
+            if "blue" == active_slot:
+                slots.idle = "blue"
+                slots.active = "green"
+                print("\nDeploying on Green slot.")
+                print("\nGreen is Active, Blue is Idle.")
+            elif "green" == active_slot:
+                slots.idle = "green"
+                slots.active = "blue"
+                print("\nDeploying on Blue slot.")
+                print("\nBlue is Active, Green is Idle.")
+            else:
+                print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
+                return False
+
+            subprocess.run(
+                [
+                    "rsync",
+                    "-a",
+                    "--delete",
+                    f"{PROJECT_PATH}/",
+                    f"/var/www/{slots.active}",
+                ],
+                stdout=subprocess.DEVNULL,
+                text=True,
+                check=False,
+            )
+
+            print(f"\nDeploying on {slots.active.capitalize()} slot.")
+
+            subprocess.run(
+                ["tee", "/etc/nginx/tealflip/active_slot.conf"],
+                input=f"root /var/www/{slots.active};",
+                stdout=subprocess.DEVNULL,
+                text=True,
+                check=False,
+            )
+
+        else:
+            print(f"index.html does not exist in {PROJECT_PATH}, switching CANCELD!")
+            return False
+    else:
+        print(f"\nRolling back from {slots.active} slot to {slots.idle}")
+
+        if "blue" == active_slot:
+            slots.idle = "blue"
+            slots.active = "green"
+            print("\nGreen is Active, Blue is Idle.")
+        elif "green" == active_slot:
+            slots.idle = "green"
+            slots.active = "blue"
+            print("\nBlue is Active, Green is Idle.")
+        else:
+            print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
+            return False
+
+        slots.last_bad_commit = (
+            Path(f"/var/www/{slots.active}/.git/refs/heads/main")
+            .read_text()
+            .strip("\n")
+        )
+
         subprocess.run(
             ["tee", "/etc/nginx/tealflip/active_slot.conf"],
-            input=f"root /var/www/{input_slot};",
+            input=f"root /var/www/{slots.active};",
             stdout=subprocess.DEVNULL,
             text=True,
             check=False,
         )
-        slots.active = input_slot
-        slots.idle = current_slot
-    else:
-        print(f"index.html does not exist in {input_slot} slot, switching CANCELD!")
-        return False
 
     if nginx_reload():
-        print("\nNgnix Reloaded Successfully.")
-        last_good_commit = (
-            Path(f"/var/www/{input_slot}/.git/refs/heads/main").read_text().strip("\n")
+        print(
+            f"\n{slots.active.capitalize()} is Active, {slots.idle.capitalize()} is Idle."
         )
+
+        last_good_commit = (
+            Path(f"/var/www/{slots.active}/.git/refs/heads/main")
+            .read_text()
+            .strip("\n")
+        )
+
         with open(f"{project_dir}/slots.py", "w") as file:
             file.write(
                 f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
             )
     else:
-        print(
-            f"\nNgnix Failed to Reload!, rolling back to previous {current_slot} slot."
-        )
-        last_bad_commit = (
-            Path(f"/var/www/{input_slot}/.git/refs/heads/main").read_text().strip("\n")
-        )
+        print(f"\nNgnix Failed to Reload!, rolling back to previous {slots.idle} slot.")
+        print(f"\nDeploying on {slots.idle.capitalize()} slot.")
 
-        slots.active = current_slot
-        slots.idle = input_slot
+        last_bad_commit = (
+            Path(f"/var/www/{slots.active}/.git/refs/heads/main")
+            .read_text()
+            .strip("\n")
+        )
 
         subprocess.run(
             ["tee", "/etc/nginx/tealflip/active_slot.conf"],
-            input=f"root /var/www/{current_slot};",
+            input=f"root /var/www/{slots.idle};",
             stdout=subprocess.DEVNULL,
             text=True,
             check=False,
         )
+
+        print(
+            f"\n{slots.idle.capitalize()} is Active, {slots.active.capitalize()} is Idle."
+        )
         with open(f"{project_dir}/slots.py", "w") as file:
             file.write(
-                f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
+                f'active: str = "{slots.idle}"\nidle: str = "{slots.active}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
             )
 
         return False
 
-    print(f"\nDeploying on {slots.active.capitalize()} slot.")
-    print(
-        f"\n{slots.active.capitalize()} is Active, {slots.idle.capitalize()} is Idle."
-    )
     return True
