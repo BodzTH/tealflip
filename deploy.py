@@ -96,7 +96,7 @@ def deploy() -> None:
                 f"{project_dir}/tealflip_sudoer",
                 "/etc/sudoers.d/",
             ],
-            check=False,
+            check=True,
             text=True,
             shell=False,
         )
