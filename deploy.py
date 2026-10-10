@@ -25,11 +25,8 @@ def deploy() -> None:
                 text=True,
                 check=True,
             )
-            if switch(True):
-                print(f"\nSwitching to {slots.active.capitalize()} Succeeded.")
-            else:
-                print(f"\nSwitching to {slots.active.capitalize()} Failed!")
-                return
+            switch(True)
+
         except subprocess.CalledProcessError as e:
             print("\nDeploy Failed!\n", e.stderr)
             return
@@ -134,8 +131,4 @@ def deploy() -> None:
                     file.write(line)
         return
 
-    if switch(True):
-        print(f"\nSwitching to {slots.active.capitalize()} Succeeded.")
-    else:
-        print(f"\nSwitching to {slots.idle.capitalize()} Failed!")
-        return
+    switch(True)
