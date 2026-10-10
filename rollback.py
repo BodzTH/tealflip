@@ -19,7 +19,7 @@ def rollback() -> None:
         return
 
     if switch(False):
-        print(f"\nSwitching to {slots.idle} Succeeded.")
+        print(f"\nSwitching to {slots.active} Succeeded.")
     else:
-        print(f"\nSwitching to {slots.idle} Failed!")
+        print(f"\nSwitching to {slots.active} Failed!")
         return

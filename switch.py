@@ -52,12 +52,10 @@ def switch(is_deployment: bool) -> bool:
                 slots.idle = "blue"
                 slots.active = "green"
                 print("\nDeploying on Green slot.")
-                print("\nGreen is Active, Blue is Idle.")
             elif "green" == active_slot:
                 slots.idle = "green"
                 slots.active = "blue"
                 print("\nDeploying on Blue slot.")
-                print("\nBlue is Active, Green is Idle.")
             else:
                 print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
                 return False
@@ -89,25 +87,25 @@ def switch(is_deployment: bool) -> bool:
             print(f"index.html does not exist in {PROJECT_PATH}, switching CANCELD!")
             return False
     else:
-        print(f"\nRolling back from {slots.active} slot to {slots.idle}")
+        print(
+            f"\nRolling back from {slots.active.capitalize()} slot to {slots.idle.capitalize()}"
+        )
 
-        if "blue" == active_slot:
-            slots.idle = "blue"
-            slots.active = "green"
-            print("\nGreen is Active, Blue is Idle.")
-        elif "green" == active_slot:
-            slots.idle = "green"
-            slots.active = "blue"
-            print("\nBlue is Active, Green is Idle.")
-        else:
-            print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
-            return False
-
-        slots.last_bad_commit = (
+        last_bad_commit = (
             Path(f"/var/www/{slots.active}/.git/refs/heads/main")
             .read_text()
             .strip("\n")
         )
+
+        if "blue" == active_slot:
+            slots.idle = "blue"
+            slots.active = "green"
+        elif "green" == active_slot:
+            slots.idle = "green"
+            slots.active = "blue"
+        else:
+            print("active_slot.conf in /etc/nginx/tealflip/ IS EMPTY!, Quiting.")
+            return False
 
         subprocess.run(
             ["tee", "/etc/nginx/tealflip/active_slot.conf"],
@@ -119,7 +117,7 @@ def switch(is_deployment: bool) -> bool:
 
     if nginx_reload():
         print(
-            f"\n{slots.active.capitalize()} is Active, {slots.idle.capitalize()} is Idle."
+            f"\n{slots.active.capitalize()} is Active, {slots.idle.capitalize()} is Idle.\n"
         )
 
         last_good_commit = (
@@ -151,7 +149,7 @@ def switch(is_deployment: bool) -> bool:
         )
 
         print(
-            f"\n{slots.idle.capitalize()} is Active, {slots.active.capitalize()} is Idle."
+            f"\n{slots.idle.capitalize()} is Active, {slots.active.capitalize()} is Idle.\n"
         )
         with open(f"{project_dir}/slots.py", "w") as file:
             file.write(

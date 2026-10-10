@@ -26,9 +26,9 @@ def deploy() -> None:
                 check=True,
             )
             if switch(True):
-                print(f"\nSwitching to {slots.active} Succeeded.")
+                print(f"\nSwitching to {slots.active.capitalize()} Succeeded.")
             else:
-                print(f"\nSwitching to {slots.active} Failed!")
+                print(f"\nSwitching to {slots.active.capitalize()} Failed!")
                 return
         except subprocess.CalledProcessError as e:
             print("\nDeploy Failed!\n", e.stderr)
@@ -135,7 +135,7 @@ def deploy() -> None:
         return
 
     if switch(True):
-        print(f"\nSwitching to {slots.active} Succeeded.")
+        print(f"\nSwitching to {slots.active.capitalize()} Succeeded.")
     else:
-        print(f"\nSwitching to {slots.active} Failed!")
+        print(f"\nSwitching to {slots.active.capitalize()} Failed!")
         return
