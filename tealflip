@@ -2,11 +2,11 @@
 
 import argparse
 
-from deploy import deploy
-from init import init
-from rollback import rollback
-from status import status
-from watch import watch
+from subcommands.deploy import deploy
+from subcommands.init import init
+from subcommands.rollback import rollback
+from subcommands.status import status
+from subcommands.watch import watch
 
 parser = argparse.ArgumentParser("tealflip")
 

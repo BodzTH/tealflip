@@ -1,9 +1,10 @@
 import subprocess
 from pathlib import Path
 
-import slots
-from config import INITIALIZED, PROJECT_PATH
-from nginx_reload import nginx_reload
+from variables import slots
+from variables.config import INITIALIZED, PROJECT_PATH
+
+from .nginx_reload import nginx_reload
 
 
 def switch(is_deployment: bool) -> None:
@@ -18,7 +19,7 @@ def switch(is_deployment: bool) -> None:
         )
         return
 
-    project_dir = Path(__file__).parent
+    project_dir = Path(__file__).resolve().parents[1]
 
     last_good_commit: str = slots.last_good_commit
     last_bad_commit: str = slots.last_bad_commit
@@ -41,7 +42,10 @@ def switch(is_deployment: bool) -> None:
             .strip("\n")
         )
         project_commit = (
-            Path(f"{PROJECT_PATH}/.git/refs/heads/main").read_text().strip("\n")
+            Path(f"{PROJECT_PATH}/.git/refs/heads/main")
+            .resolve()
+            .read_text()
+            .strip("\n")
         )
         if project_commit == active_commit:
             print("Active Deployment already has latest commit!")
@@ -125,7 +129,7 @@ def switch(is_deployment: bool) -> None:
             .strip("\n")
         )
 
-        with open(f"{project_dir}/slots.py", "w") as file:
+        with open(f"{project_dir}/variables/slots.py", "w") as file:
             file.write(
                 f'active: str = "{slots.active}"\nidle: str = "{slots.idle}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
             )
@@ -150,7 +154,7 @@ def switch(is_deployment: bool) -> None:
         print(
             f"\n{slots.idle.capitalize()} is Active, {slots.active.capitalize()} is Idle."
         )
-        with open(f"{project_dir}/slots.py", "w") as file:
+        with open(f"{project_dir}/variables/slots.py", "w") as file:
             file.write(
                 f'active: str = "{slots.idle}"\nidle: str = "{slots.active}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
             )

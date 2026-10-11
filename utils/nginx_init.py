@@ -2,8 +2,8 @@ import os
 import subprocess
 from pathlib import Path
 
-from config import DNS, IP
-from deploy import deploy
+from subcommands.deploy import deploy
+from variables.config import DNS, IP
 
 
 def nginx_init() -> None:
@@ -12,7 +12,7 @@ def nginx_init() -> None:
         print("Exiting Nginx init function.")
         return
     rootcert_path = Path.home() / ".local" / "share" / "mkcert"
-    project_dir = Path(__file__).parent
+    project_dir = Path(__file__).resolve().parents[1]
     user = os.getlogin()
     subprocess.run(
         [
@@ -100,10 +100,13 @@ def nginx_init() -> None:
     print(
         f"Copy rootCA pub key in {rootcert_path}/rootCA.pem and add it to your Browser Certificates"
     )
+    print(f"Add \033[48;5;238m{IP} {DNS}\033[0m line to your /etc/hosts")
 
     os.environ["DNS"] = DNS
     nginx_conf_text = (
-        Path(f"{project_dir}/nginx_template.conf").read_text().replace("${DNS}", DNS)
+        Path(f"{project_dir}/templates/nginx_template.conf")
+        .read_text()
+        .replace("${DNS}", DNS)
     )
 
     subprocess.run(
@@ -114,10 +117,10 @@ def nginx_init() -> None:
         check=False,
     )
 
-    slots_file = Path(f"{project_dir}/slots_template.py").read_text()
+    slots_file = Path(f"{project_dir}/templates/slots_template.py").read_text()
 
     subprocess.run(
-        ["tee", f"{project_dir}/slots.py"],
+        ["tee", f"{project_dir}/variables/slots.py"],
         input=slots_file,
         stdout=subprocess.DEVNULL,
         text=True,
