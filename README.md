@@ -8,10 +8,10 @@
   <h3>Blue/Green Deployment Tool</h3>
 </div>
 
-`tealflip` is a tool that automates deploying project's new git commits/push using blue/green deployment technique.
+`tealflip` is an automation tool that uses blue/green deployment technique to automate service's deployments/updates while maintaining __99%__ uptime.
 
 ## Motivation
-If you have a home server and you are concerned with the uptime of your services or auto deploying new updates, this might be the right tool (hopefully).
+If you have a home server and you are concerned with the uptime of your services or having a painful time deploying new updates, this might be the right tool (hopefully).
 
 ## The Problem
 I have a service running inside a podman container on my old laptop, each time I want to update something in that service I have to ssh to the laptop and:
@@ -32,7 +32,8 @@ cd tealflip
 
 ### 2. Initialize the tool
 
-Make sure you are inside tealflip directory and run:
+Make sure your working directory at tealflip directory then run:
 ```shell
 ./tealflip init
 ```
+The above command will initialize necessary services, environment variables, and nginx. It will also ask for Repo URL , Server IP, DNS, and Project git managed path.
