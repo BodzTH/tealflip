@@ -1,15 +1,15 @@
-<!-- ![Nginx](https://img.shields.io/badge/Nginx-black?style=flat&logo=Nginx&logoColor=green)
-![Git](https://img.shields.io/badge/Git-black?style=flat&logo=Git)
-![Python](https://img.shields.io/badge/Python-black?style=flat&logo=Python)
- -->
-
 <div align="center">
 
-# $\color{#14b8a6}{\textsf{TealFlip}}$
+# $\color{#2a9d8f}{\textsf{TealFlip}}$
 
-$\color{#3b82f6}{\textsf{Blue}}\ \color{#8b949e}{\textsf{⇄}}\ \color{#22c55e}{\textsf{Green}}\ \color{#8b949e}{\textsf{Deployment Tool}}$
+### $\color{#4a7fd4}{\textsf{Blue}}\ \color{#ffffff}{\textsf{⇄}}\ \color{#3fa66b}{\textsf{Green}}\ \color{#ffffff}{\textsf{Deployment Tool}}$
 
+![Nginx](https://img.shields.io/badge/Nginx-black?style=flat&logo=Nginx&logoColor=green)
+![Git](https://img.shields.io/badge/Git-black?style=flat&logo=Git)
+![Python](https://img.shields.io/badge/Python-black?style=flat&logo=Python)
 </div>
+
+
 
 `tealflip` is an automation tool that uses blue/green deployment technique to automate service's deployments/updates while maintaining __99%__ uptime.
 
