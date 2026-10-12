@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 
 import argparse
+import sys
 
 from arguments.template import template
-from subcommands.deploy import deploy
-from subcommands.init import init
-from subcommands.rollback import rollback
-from subcommands.status import status
-from subcommands.watch import watch
-from variables.config import INITIALIZED
+
+imported: bool = True
+try:
+    from subcommands.deploy import deploy
+    from subcommands.init import init
+    from subcommands.rollback import rollback
+    from subcommands.status import status
+    from subcommands.watch import watch
+except ImportError:
+    imported = False
+
 
 parser = argparse.ArgumentParser("tealflip")
 
@@ -19,40 +25,67 @@ parser.add_argument(
     help="Makes a copy of templates/ configuration variables",
 )
 
-subparsers = parser.add_subparsers(title="subcommands", prog="tealflip", required=True)
+if not imported:
+    args = parser.parse_args()  # Placing parser call inside imported if statement so --help argument does not stop at this call and reads the next parser call
+    if args.template:
+        template()
+        sys.exit(0)
+    else:
+        print("Configuration Variables Does Not Exist!")
+        print("run: \033[48;5;238m./tealflip -t\033[0m")
+        sys.exit(1)
+else:
+    pass
 
+try:
+    subparsers = parser.add_subparsers(
+        title="commands",
+        prog="tealflip",
+        dest="command",
+        metavar="<command>",
+        required=False,
+    )
 
-parser_init = subparsers.add_parser(
-    "init",
-    description="tealflip initializer",
-    help="Initialize files and configurations",
-).set_defaults(func=init)
+    parser_init = subparsers.add_parser(
+        "init",
+        description="tealflip initializer",
+        help="Initialize files and configurations",
+    ).set_defaults(func=init)
 
-parser_status = subparsers.add_parser(
-    "status", description="tealflip status", help="Shows current active slot"
-).set_defaults(func=status)
+    parser_status = subparsers.add_parser(
+        "status",
+        description="tealflip status",
+        help="Displays idle/active slots commit hash",
+    ).set_defaults(func=status)
 
-parser_rollback = subparsers.add_parser(
-    "rollback", description="tealflip rollback", help="Rollback to idle slot"
-).set_defaults(func=rollback)
+    parser_rollback = subparsers.add_parser(
+        "rollback",
+        description="tealflip rollback",
+        help="Rolls back to healthy idle slot",
+    ).set_defaults(func=rollback)
 
-parser_deploy = subparsers.add_parser(
-    "deploy", description="tealflip deploy", help="Deploy new version commit"
-).set_defaults(func=deploy)
+    parser_deploy = subparsers.add_parser(
+        "deploy", description="tealflip deploy", help="Deploys new commit version"
+    ).set_defaults(func=deploy)
 
-parser_watch = subparsers.add_parser(
-    "watch", description="tealflip watch", help="Watch remote git"
-).set_defaults(func=watch)
+    parser_watch = subparsers.add_parser(
+        "watch", description="tealflip watch", help="Watchs remote git repository"
+    ).set_defaults(func=watch)
+
+except NameError:
+    print("Missing subcommand import!")
+    sys.exit(1)
 
 args = parser.parse_args()
 
-
-if args.template:
-    if INITIALIZED:
-        print(
-            "TealFlip is already initialized!, refusing -t/--template to preserve variables."
-        )
-    else:
-        template()
-else:
+if len(sys.argv) == 1:
+    parser.print_help()
+    sys.exit(0)
+elif args.template:
+    print("config.py Already Exists in variables/ directory")
+    sys.exit(0)
+try:
     args.func()
+except AttributeError:
+    print("Bad subcommand function call!")
+    sys.exit(1)
