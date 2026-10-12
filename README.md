@@ -30,10 +30,22 @@ git clone https://github.com/BodzTH/tealflip.git
 cd tealflip
 ```
 
-### 2. Initialize the tool
-
+### 2. Set Configurations
 Make sure your working directory at tealflip directory then run:
 ```shell
 ./tealflip init
 ```
-The above command will initialize necessary services, environment variables, and nginx. It will also ask for Repo URL , Server IP, DNS, and Project git managed path.
+As you may have saw the output message you need to set configuration variables of your git/machine/project, set the following configuration variables in __variables/config.py__:
+- REPO_URL (Remote Git Repository)
+- IP (The local IP of your machine)
+- DNS (A domain name for your machine preferably a [example].local)
+- PROJECT_PATH (Absolute Path of the project managed with same REPO_URL remote git)
+
+### 3. Initialize the tool
+
+After you make sure you have set the right configurations, run command again:
+```shell
+./tealflip init
+```
+The above command will initialize necessary services, environment variables, and Nginx.
+  
