@@ -4,8 +4,11 @@
  -->
 
 <div align="center">
-  <h1 align="center">TealFlip</h1>
-  <h3>Blue/Green Deployment Tool</h3>
+
+# $\color{#14b8a6}{\textsf{TealFlip}}$
+
+$\color{#3b82f6}{\textsf{Blue}}\ \color{#8b949e}{\textsf{⇄}}\ \color{#22c55e}{\textsf{Green}}\ \color{#8b949e}{\textsf{Deployment Tool}}$
+
 </div>
 
 `tealflip` is an automation tool that uses blue/green deployment technique to automate service's deployments/updates while maintaining __99%__ uptime.
