@@ -73,24 +73,14 @@ def add_path_env(bin_path: Path, shell_config_file: Path) -> None:
 
 
 def init():
-    project_dir = Path(__file__).resolve().parents[1]
-
     try:
         if INITIALIZED:
             print("Already Initialized!")
             return
     except NameError:
-        config_template = Path(
-            f"{project_dir}/templates/config_template.py"
-        ).read_text()
-
-        subprocess.run(
-            ["tee", f"{project_dir}/variables/config.py"],
-            input=config_template,
-            stdout=subprocess.DEVNULL,
-            text=True,
-            check=False,
-        )
+        print("Configuration Variables Does Not Exist!")
+        print("run: \033[48;5;238m./tealflip -t\033[0m")
+        return
 
     if (
         REPO_URL == "https//:REPO_URL"
@@ -144,6 +134,7 @@ def init():
     ):  # if tealflip symlink exist in bin directory
         print(f"{bin_path}/tealflip Symlink Already Exist.")
     else:
+        project_dir = Path(__file__).resolve().parents[1]
         subprocess.run(
             ["ln", "-s", f"{project_dir}/tealflip", f"{bin_path}/tealflip"],
             text=True,

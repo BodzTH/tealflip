@@ -2,14 +2,22 @@
 
 import argparse
 
+from arguments.template import template
 from subcommands.deploy import deploy
 from subcommands.init import init
 from subcommands.rollback import rollback
 from subcommands.status import status
 from subcommands.watch import watch
+from variables.config import INITIALIZED
 
 parser = argparse.ArgumentParser("tealflip")
 
+parser.add_argument(
+    "-t",
+    "--template",
+    action="store_true",
+    help="Makes a copy of templates/ configuration variables",
+)
 
 subparsers = parser.add_subparsers(title="subcommands", prog="tealflip", required=True)
 
@@ -37,4 +45,14 @@ parser_watch = subparsers.add_parser(
 ).set_defaults(func=watch)
 
 args = parser.parse_args()
-args.func()
+
+
+if args.template:
+    if INITIALIZED:
+        print(
+            "TealFlip is already initialized!, refusing -t/--template to preserve variables."
+        )
+    else:
+        template()
+else:
+    args.func()
