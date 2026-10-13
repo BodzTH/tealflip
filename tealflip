@@ -58,18 +58,22 @@ try:
         help="Displays idle/active slots commit hash",
     ).set_defaults(func=status)
 
+    parser_deploy = subparsers.add_parser(
+        "deploy",
+        description="tealflip deploy",
+        help="Deploys new commit version and switches to latest healthy commit",
+    ).set_defaults(func=deploy)
+
     parser_rollback = subparsers.add_parser(
         "rollback",
         description="tealflip rollback",
         help="Rolls back to healthy idle slot",
     ).set_defaults(func=rollback)
 
-    parser_deploy = subparsers.add_parser(
-        "deploy", description="tealflip deploy", help="Deploys new commit version"
-    ).set_defaults(func=deploy)
-
     parser_watch = subparsers.add_parser(
-        "watch", description="tealflip watch", help="Watchs remote git repository"
+        "watch",
+        description="tealflip watch",
+        help="Watches for latest remote git commits",
     ).set_defaults(func=watch)
 
 except NameError:
