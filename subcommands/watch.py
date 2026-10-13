@@ -68,3 +68,4 @@ def watch() -> None:
             return
     else:
         print("Last Commit Already Deployed!")
+        return

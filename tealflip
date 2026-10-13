@@ -39,16 +39,16 @@ else:
 
 try:
     subparsers = parser.add_subparsers(
-        title="commands",
+        title="subcommands",
         prog="tealflip",
-        dest="command",
-        metavar="<command>",
+        dest="subcommand",
+        metavar="<subcommand>",
         required=False,
     )
 
     parser_init = subparsers.add_parser(
         "init",
-        description="tealflip initializer",
+        description="tealflip initialize",
         help="Initialize files and configurations",
     ).set_defaults(func=init)
 

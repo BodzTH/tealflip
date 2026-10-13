@@ -32,3 +32,4 @@ def status() -> None:
         return
 
     print(f"\nIdle Slot Commit Hash: {idle_ref}")
+    return

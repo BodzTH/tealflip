@@ -159,6 +159,4 @@ def switch(is_deployment: bool) -> None:
                 f'active: str = "{slots.idle}"\nidle: str = "{slots.active}"\nlast_good_commit: str = "{last_good_commit}"\nlast_bad_commit: str = "{last_bad_commit}"'
             )
 
-        return
-
     return
