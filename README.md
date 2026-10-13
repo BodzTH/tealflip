@@ -25,6 +25,20 @@ I have a service running inside a podman container on my old laptop, each time I
 4. Hope it does not crash.
 5. Repeat.
 
+## Solution
+Automate deployments with blue/green deployment technique as follows: 
+
+Status: __Active__ Slot: $\color{#4a7fd4}{\textsf{Blue}}\$ __Commit__: B, __Idle__ Slot: $\color{#3fa66b}{\textsf{Green}}\$ __Commit__: A 
+
+1. Watch latest remote git commits <br>
+2. Deploy new healthy commit on new Active slot, __Commit__: C <br>
+
+    __Active__ Slot: $\color{#3fa66b}{\textsf{Green}}\$ __Commit__: C, __Idle__ Slot: $\color{#4a7fd4}{\textsf{Blue}}\$ __Commit__: B
+
+3. Rollback in case active slot has bugs
+
+    __Active__ Slot: $\color{#4a7fd4}{\textsf{Blue}}\$ __Commit__: B, __Idle__ Slot: $\color{#3fa66b}{\textsf{Green}}\$ __Commit__: C 
+
 ## Installation
 
 ### 1. Clone the repository
@@ -57,4 +71,3 @@ After you make sure you have set the right configurations, run the following com
 ./tealflip init
 ```
 The above command will initialize necessary services, environment variables, and Nginx. Now you can run `tealflip` command from any path in your machine.
-  
