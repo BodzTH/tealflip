@@ -83,5 +83,5 @@ The above command will initialize necessary services, environment variables, and
 - Automate container deployments
 
 > [!NOTE]
-> You can test TealFlip with simple index.html as in [TealFlip Demo](https://github.com/BodzTH/tealflip-demo) <br>
-> As TealFlip is still under development, fully functional blue/green deployment for a container is not yet implemented. <br>
+> You can test TealFlip with simple index.html as in [TealFlip Demo](https://github.com/BodzTH/tealflip-demo). <br>
+> TealFlip is under development, fully functional blue/green deployment for a container is not yet implemented.
