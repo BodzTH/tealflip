@@ -60,6 +60,11 @@ def nginx_init() -> None:
         shell=False,
         stdout=subprocess.DEVNULL,
     )
+    if Path(f"/home/{user}/.local/share/mkcert/rootCA-key.pem").is_file():
+        print(
+            f"Delete rootCA-key.pem and rootCA.pem from in /home/{user}/.local/share/mkcert"
+        )
+        return
     subprocess.run(
         ["mkcert", "-install"],
         check=False,
@@ -98,9 +103,11 @@ def nginx_init() -> None:
         shell=False,
     )
     print(
-        f"Copy rootCA pub key in {rootcert_path}/rootCA.pem and add it to your Browser Certificates"
+        f"Copy rootCA pub key in \033[48;5;238m{rootcert_path}/rootCA.pem\033[0m and write to a file in your device to import it your Browser Certificates"
     )
-    print(f"Add \033[48;5;238m{IP} {DNS}\033[0m line to your /etc/hosts")
+    print(
+        f"Add \033[48;5;238m{IP} {DNS}\033[0m line to your /etc/hosts in the device you want to access the domain from."
+    )
 
     os.environ["DNS"] = DNS
     nginx_conf_text = (
