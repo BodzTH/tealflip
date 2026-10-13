@@ -71,3 +71,17 @@ After you make sure you have set the right configurations, run the following com
 ./tealflip init
 ```
 The above command will initialize necessary services, environment variables, and Nginx. Now you can run `tealflip` command from any path in your machine.
+
+## Subcommands
+`status`: Displays idle/active slots commit hash <br>
+`deploy`: Deploys new commit version and switches to latest healthy commit <br>
+`rollback`: Rolls back to healthy idle slot <br>
+`watch`: Watches for latest remote git commits
+
+## Coming 
+- Interactive selection rolling back to any healthy commit in commits history
+- Automate container deployments
+
+> [!NOTE]
+> You can test TealFlip with simple index.html as in [TealFlip Demo](https://github.com/BodzTH/tealflip-demo) <br>
+> As TealFlip is still under development, fully functional blue/green deployment for a container is not yet implemented. <br>
