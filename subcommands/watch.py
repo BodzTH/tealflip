@@ -30,12 +30,12 @@ def watch() -> None:
     )
     if last_commit != project_commit:
         try:
-            git_pull = subprocess.run(
+            git_fetch = subprocess.run(
                 [
                     "git",
                     "-C",
                     f"{PROJECT_PATH}",
-                    "pull",
+                    "fetch",
                     "origin",
                     "main",
                 ],
@@ -44,8 +44,22 @@ def watch() -> None:
                 check=True,
                 capture_output=True,
             )
+            git_reset = subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    f"{PROJECT_PATH}",
+                    "reset",
+                    "--hard",
+                    "origin/main",
+                ],
+                text=True,
+                shell=False,
+                check=True,
+                capture_output=True,
+            )
 
-            print(git_pull.stdout)
+            print(git_fetch.stdout, git_reset.stdout)
 
             deploy()
 
