@@ -14,19 +14,20 @@
 `tealflip` is an automation tool that uses blue/green deployment technique to automate service's deployments/updates while maintaining __99%__ uptime.
 
 ## Motivation
-If you have a home server and you are concerned with the uptime of your services or having a painful time deploying new updates, this might be the right tool (hopefully).
+If you have a home server and you are concerned with the uptime of your services or having a painful time deploying a new commit, this might be the right tool (hopefully).
 
 ## The Problem
-I have a service running inside a podman container on my old laptop, each time I want to update something in that service I have to ssh to the laptop and:
+I have a service that runs inside a container on my old laptop, every time I want to deploy a new commit to the service, I do the following:
 
-1. `git pull` 
-2. Shutdown the podman 
-3. Run the podman again.
-4. Hope it does not crash.
-5. Repeat.
+1. SSH to the laptop
+2. Navigate to project directory
+3. `git pull`
+4. Shutdown the container 
+5. Run the container again.
+6. Hope it does not crash.
 
 ## Solution
-Automate deployments with blue/green deployment technique as follows: 
+One of the solutions I picked, is to automate deployments with $\color{#4a7fd4}{\textsf{Blue}}\$ / $\color{#3fa66b}{\textsf{Green}}\$ deployment technique, Below is an example how it works: 
 
 Status: __Active__ Slot: $\color{#4a7fd4}{\textsf{Blue}}\$ __Commit__: B, __Idle__ Slot: $\color{#3fa66b}{\textsf{Green}}\$ __Commit__: A 
 
