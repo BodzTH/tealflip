@@ -31,8 +31,8 @@ One of the solutions I picked, is to automate deployments with $\color{#4a7fd4}{
 
 Status: __Active__ Slot: $\color{#4a7fd4}{\textsf{Blue}}\$ __Commit__: B, __Idle__ Slot: $\color{#3fa66b}{\textsf{Green}}\$ __Commit__: A 
 
-1. Watch latest remote git commits <br>
-2. Deploy new healthy commit on new Active slot, __Commit__: C <br>
+1. Watch latest remote git commits
+2. Deploy new healthy commit on new Active slot, __Commit__: C
 
     __Active__ Slot: $\color{#3fa66b}{\textsf{Green}}\$ __Commit__: C, __Idle__ Slot: $\color{#4a7fd4}{\textsf{Blue}}\$ __Commit__: B
 
@@ -54,8 +54,8 @@ Make sure your working directory at `tealflip/` directory then run:
 ```shell
 ./tealflip -t
 ```
-This will make a copy of the files in `templates/` and place it in `variables/` directory, this separation is important as the __data__ in `variables/` must be preserved.<br>  
-As you may have saw the output message you need to set configuration variables for your git, machine,  and project.<br>
+This will make a copy of the files in `templates/` and place it in `variables/` directory, this separation is important as the __data__ in `variables/` must be preserved. As you may have saw the output message you need to set configuration variables for your git, machine,  and project.
+
 Set the following configuration variables in `variables/config.py`:
 - REPO_URL (Remote Git Repository)
 - IP (The local IP of your machine)
@@ -74,9 +74,9 @@ After you make sure you have set the right configurations, run the following com
 The above command will initialize necessary services, environment variables, and Nginx. Now you can run `tealflip` command from any path in your machine.
 
 ## Subcommands
-`status`: Displays idle/active slots commit hash <br>
-`deploy`: Deploys new commit version and switches to latest healthy commit <br>
-`rollback`: Rolls back to healthy idle slot <br>
+`status`: Displays idle/active slots commit hash\
+`deploy`: Deploys new commit version and switches to latest healthy commit\
+`rollback`: Rolls back to healthy idle slot\
 `watch`: Watches for latest remote git commits
 
 ## Coming 
@@ -84,5 +84,5 @@ The above command will initialize necessary services, environment variables, and
 - Automate container deployments
 
 > [!NOTE]
-> You can test TealFlip with simple index.html as in [TealFlip Demo](https://github.com/BodzTH/tealflip-demo). <br>
+> You can test TealFlip with simple index.html as in [TealFlip Demo](https://github.com/BodzTH/tealflip-demo).\
 > TealFlip is under development, fully functional blue/green deployment for a container is not yet implemented.
